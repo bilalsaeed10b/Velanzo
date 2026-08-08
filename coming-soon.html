@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon — Luno</title>
+  <title>Coming Soon - Shahan</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
@@ -21,8 +21,8 @@
         <p class="eyebrow"><span data-dept>Women</span></p>
         <h1 class="soon__title">Coming Soon</h1>
         <p class="soon__text">We're putting the finishing touches on the <span data-dept-lower>women's</span> collection.
-          Join the list and we'll let you know the moment it drops.</p>
-        <form class="soon__form" onsubmit="LUNA.toast('Thanks — we\\'ll keep you posted');return false;">
+          Join the list and we'll let you know when it drops.</p>
+        <form class="soon__form" onsubmit="LUNA.toast('Thanks - we\\'ll keep you posted');return false;">
           <input type="email" placeholder="Enter your email" required aria-label="Email" />
           <button type="submit">Notify Me</button>
         </form>
@@ -46,12 +46,12 @@
   <script>
     (function () {
       var dept = new URLSearchParams(location.search).get('dept') || 'women';
-      var label = dept.charAt(0).toUpperCase() + dept.slice(1);
-      var lower = dept === 'juniors' ? "juniors'" : "women's";
+      var label = dept === 'custom' ? 'Custom Designs' : dept.charAt(0).toUpperCase() + dept.slice(1);
+      var lower = dept === 'juniors' ? "juniors'" : dept === 'custom' ? "custom designs'" : "women's";
       document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('[data-dept]').forEach(function (e) { e.textContent = label; });
         document.querySelectorAll('[data-dept-lower]').forEach(function (e) { e.textContent = lower; });
-        document.title = label + ' — Coming Soon — Luno';
+        document.title = label + ' - Coming Soon - Shahan';
       });
     })();
   </script>

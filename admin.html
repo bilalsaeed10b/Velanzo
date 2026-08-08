@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luno Admin</title>
+  <title>Shahan Admin</title>
   <meta name="robots" content="noindex, nofollow" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,7 +18,7 @@
     <div class="adm-moon adm-moon--left"><span class="moon moon--sand moon--float" style="width:100%;height:100%"></span></div>
     <div class="adm-moon adm-moon--right"><span class="moon moon--sand moon--float" style="width:100%;height:100%"></span></div>
     <div class="adm-login__card">
-      <h1 class="adm-logo"><span class="moon moon--sand" style="width:26px;height:26px"></span>LUNO <span>ADMIN</span></h1>
+      <h1 class="adm-logo"><span class="moon moon--sand" style="width:26px;height:26px"></span>SHAHAN <span>ADMIN</span></h1>
       <div data-setup-note></div>
       <form data-login-form>
         <label>Email<input name="email" type="email" required autocomplete="username" /></label>
@@ -33,7 +33,7 @@
   <!-- ======== APP ======== -->
   <div class="adm-app" data-view="app" hidden>
     <header class="adm-top">
-      <h1 class="adm-logo"><span class="moon moon--sand" style="width:22px;height:22px"></span>LUNO <span>ADMIN</span></h1>
+      <h1 class="adm-logo"><span class="moon moon--sand" style="width:22px;height:22px"></span>SHAHAN <span>ADMIN</span></h1>
       <nav class="adm-nav">
         <button data-tab="products" class="is-active">Products</button>
         <button data-tab="categories">Categories</button>
@@ -112,7 +112,7 @@
         </label>
         <label>Price (PKR) *<input name="price" type="number" min="0" step="1" required /></label>
         <label>Compare-at Price (PKR)<input name="compare_at" type="number" min="0" step="1" placeholder="Higher than price" />
-          <span class="adm-hint">Set this above the price to auto-show a “Save X rs” sale badge.</span></label>
+          <span class="adm-hint">Set this above the price to auto-show a “Save X%” sale badge.</span></label>
         <label class="span2">Description<textarea name="description" rows="3" maxlength="2000" placeholder="Shown on the product page"></textarea></label>
         <label class="span2">Sizes (comma separated)<input name="sizes" placeholder="S, M, L, XL, XXL" value="S, M, L, XL, XXL" /></label>
 
@@ -123,8 +123,8 @@
         </div>
 
         <div class="span2">
-          <span class="adm-label">Images — a photo per gallery slot (first = cover)</span>
-          <span class="adm-hint" style="display:block;margin-bottom:.5rem">Each row is a gallery slot (a main photo). Use the + on a row's right to add "color images" for that same slot. Pick each photo's color from the dropdown beneath it — a color already used by another photo is hidden, so a color maps to exactly one photo. In the store, the swatches shown are the colors of the slot you're viewing; picking one swaps that slot's photo. Drag a slot by its ⠿ handle to reorder.</span>
+          <span class="adm-label">Images - a photo per gallery slot (first = cover)</span>
+          <span class="adm-hint" style="display:block;margin-bottom:.5rem">Each row is a gallery slot (a main photo). Use the + on a row's right to add "color images" for that same slot. Pick each photo's color from the dropdown beneath it - a color already used by another photo is hidden, so a color maps to exactly one photo. In the store, the swatches shown are the colors of the slot you're viewing; picking one swaps that slot's photo. Drag a slot by its ⠿ handle to reorder.</span>
           <div class="adm-imgrows" data-image-list></div>
           <input type="file" data-image-input accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden />
           <span class="adm-hint" data-upload-status></span>

@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Collection/listing page: tabs, sort, filter, layout
+﻿/* ============================================================
+   Luna - Collection/listing page: tabs, sort, filter, layout
    ============================================================ */
 (function () {
   const { products, categories, productCardHTML, esc, I } = window.LUNA;
@@ -72,7 +72,7 @@
     const label = currentLabel();
     if (els.title) els.title.textContent = label.toUpperCase();
     if (els.crumb) els.crumb.textContent = label.toUpperCase();
-    document.title = `${label} — Luno`;
+    document.title = `${label} - Shahan`;
   }
 
   function syncURL() {

@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Checkout: renders bag summary, places order through the
+﻿/* ============================================================
+   Luna - Checkout: renders bag summary, places order through the
    Supabase `place_order` RPC (server computes prices; client input
    is never trusted for totals). Demo toast when Supabase not set up.
    ============================================================ */
@@ -63,7 +63,7 @@ window.LUNA.onReady(function () {
     errEl.style.display = 'none';
 
     if (!window.LUNA.live) {
-      window.LUNA.toast('Checkout is a demo — Supabase not configured yet');
+      window.LUNA.toast('Checkout is a demo - Supabase not configured yet');
       return;
     }
     const fd = new FormData(form);
@@ -93,7 +93,7 @@ window.LUNA.onReady(function () {
         <h1 class="sec-title">Order Placed</h1>
         <p style="color:var(--ink-2);margin-top:1rem">Thank you, ${esc(name)}. Save your order number:</p>
         <div class="co-num">${esc(result.order_number)}</div>
-        <p style="color:var(--ink-2)">Total: <b>${formatPrice(result.total)}</b> — Cash on Delivery</p>
+        <p style="color:var(--ink-2)">Total: <b>${formatPrice(result.total)}</b> - Cash on Delivery</p>
         <a class="btn btn--lg" style="margin-top:1.5rem" href="track.html?o=${encodeURIComponent(result.order_number)}&e=${encodeURIComponent(email)}">Track Your Order</a>
       </div>`;
       window.scrollTo({ top: 0 });

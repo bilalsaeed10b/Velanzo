@@ -1,9 +1,9 @@
-/* ============================================================
-   Luno — Real 3D moon (assets/3d/moon.glb)
+﻿/* ============================================================
+   Shahan - Real 3D moon (assets/3d/moon.glb)
    Renders the real GLB via <model-viewer>. Two flavours:
-     • BIG   — page-hero + footer showcase moons: drag-to-spin,
+     • BIG   - page-hero + footer showcase moons: drag-to-spin,
                auto-rotating, camera-controls enabled.
-     • MINI  — the logo "O" moons (header + mobile menu + loader):
+     • MINI  - the logo "O" moons (header + mobile menu + loader):
                auto-rotating only, pointer-events off so clicks
                still reach the logo link and the CSS orbit/roll
                animations keep driving the element.

@@ -1,9 +1,9 @@
-/* ============================================================
-   Luno — Footer render + misc icon injection
+﻿/* ============================================================
+   Shahan - Footer render + misc icon injection
    ============================================================ */
 (function () {
   const I = window.LUNA.I;
-  const logo = window.LUNA.logoHTML ? window.LUNA.logoHTML() : 'LUNO';
+  const logo = window.LUNA.logoHTML ? window.LUNA.logoHTML() : 'SHAHAN';
 
   const footerHTML = `
   <footer class="footer">
@@ -16,13 +16,13 @@
             <a href="https://www.instagram.com/stylistwear" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${I.ig}</a>
             <a href="https://www.facebook.com/profile.php?id=61572334771470" target="_blank" rel="noopener noreferrer" aria-label="Facebook">${I.fb}</a>
           </div>
-          <div class="footer__moon"><span class="moon" aria-hidden="true"></span></div>
         </div>
         <div class="footer__col">
           <h5>Shop</h5>
           <a href="collection.html?c=all&dept=men">Men</a>
           <a href="coming-soon.html?dept=women">Women <span class="soon-tag">Soon</span></a>
           <a href="coming-soon.html?dept=juniors">Juniors <span class="soon-tag">Soon</span></a>
+          <a href="coming-soon.html?dept=custom">Custom Designs <span class="soon-tag">Soon</span></a>
           <a href="collection.html?c=all&sale=1">Sale</a>
           <a href="collection.html?c=footwear&dept=men">Footwear</a>
         </div>
@@ -36,7 +36,7 @@
         </div>
         <div class="footer__col">
           <h5>Company</h5>
-          <a href="about.html">About Luno</a>
+          <a href="about.html">About Shahan</a>
           <a href="#">Stores</a>
           <a href="why-choose-us.html">Why Choose Us</a>
           <a href="#">Privacy Policy</a>
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <p>© ${new Date().getFullYear()} Luno. All rights reserved. A demo storefront — not a real store.</p>
+        <p>© ${new Date().getFullYear()} Shahan. All rights reserved. A demo storefront - not a real store.</p>
         <div class="footer__pay">
           <span>VISA</span><span>MASTERCARD</span><span>COD</span><span>EASYPAISA</span>
         </div>

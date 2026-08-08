@@ -1,5 +1,5 @@
-/* ============================================================
-   Luno — Homepage behaviour: hero slider + feature grids (FEAR-style)
+﻿/* ============================================================
+   Shahan - Homepage behaviour: hero slider + feature grids (FEAR-style)
    ============================================================ */
 (function () {
   const { products } = window.LUNA;
@@ -27,10 +27,10 @@
 
   function boot() {
     initHero();
-    // NEW IN — newest first, then fill up
+    // NEW IN - newest first, then fill up
     const newIn = products.filter((p) => p.badge === 'new').concat(products).slice(0, 8);
     fill('[data-new-in]', newIn);
-    // BEST SELLERS — discounted / most-loved
+    // BEST SELLERS - discounted / most-loved
     const best = products.filter((p) => p.compareAt).concat(products.slice(0, 8)).slice(0, 8);
     fill('[data-best]', best);
   }

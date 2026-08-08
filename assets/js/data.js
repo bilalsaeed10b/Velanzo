@@ -1,11 +1,11 @@
-/* ============================================================
-   Luna — Product catalog, loaded ONLY from Supabase (config in
+﻿/* ============================================================
+   Luna - Product catalog, loaded ONLY from Supabase (config in
    supabase-config.js). No demo data: if the database is not
    reachable the catalog stays empty and pages show empty states.
    Pages that need catalog data must boot via LUNA.onReady(fn).
    ============================================================ */
 (function () {
-  // Live arrays — consumers keep references to these, so they are
+  // Live arrays - consumers keep references to these, so they are
   // mutated in place (never reassigned) when data arrives.
   const products = [];
   const categories = [{ slug: 'all', label: 'All' }];
@@ -13,7 +13,7 @@
   const cfg = window.LUNA_SUPABASE || {};
   const live = !!(cfg.url && cfg.anonKey && !String(cfg.url).includes('YOUR-') && !String(cfg.anonKey).includes('YOUR-'));
 
-  // Minimal REST client (anon key only — safe to expose; RLS guards writes).
+  // Minimal REST client (anon key only - safe to expose; RLS guards writes).
   async function api(path, opts = {}) {
     const res = await fetch(cfg.url + path, {
       ...opts,
@@ -88,7 +88,8 @@
       subtitle: `${fit} | ${dept}`,
       price: row.price,
       compareAt: row.compare_at || null,
-      discount: row.compare_at ? Math.round((1 - row.price / row.compare_at) * 100) : 0,
+      // Discount shown relative to the current price: savings ÷ current price.
+      discount: row.compare_at && row.price ? Math.round((row.compare_at - row.price) / row.price * 100) : 0,
       colors, // [{id, name, hex}]
       sizes: Array.isArray(row.sizes) && row.sizes.length ? row.sizes : ['One Size'],
       badge: row.badge || null,
@@ -120,7 +121,7 @@
   });
   const dataReady = live
     ? loadLive().catch((e) => console.warn('Luna: catalog unavailable.', e))
-    : Promise.resolve(console.warn('Luna: Supabase not configured — catalog is empty. See SETUP.md.'));
+    : Promise.resolve(console.warn('Luna: Supabase not configured - catalog is empty. See SETUP.md.'));
 
   window.LUNA = window.LUNA || {};
   // HTML-escape helper used by every template that renders DB content.

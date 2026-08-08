@@ -1,24 +1,18 @@
-/* ============================================================
-   Luno — Loading screen
-   Fills #luno-loader with the LUN + moon mark, plays the
-   assemble animation, then removes the overlay. Loads first so
-   the white cover is shown before the rest of the page scripts.
+﻿/* ============================================================
+   Shahan - Loading screen
+   Shows the crown logo with a blinking animation, then removes
+   the overlay. Loads first so the white cover is shown before
+   the rest of the page scripts.
    ============================================================ */
 (function () {
   var el = document.getElementById('luno-loader');
   if (!el) return;
 
   el.innerHTML =
-    '<div class="loader__logo">' +
-      '<span class="loader__lun">LUN</span>' +
-      '<span class="logo__o loader__o">' +
-        '<span class="moon loader__moon moon--o" aria-hidden="true"></span>' +
-        '<span>O</span>' +
-      '</span>' +
-    '</div>';
+    '<img class="loader__crown" src="assets/images/logo-crown.png" alt="Shahan">';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var HOLD = reduce ? 500 : 2300; // let the assemble animation finish, then a short beat
+  var HOLD = reduce ? 500 : 2300;
 
   // Lock scroll while the loader is up.
   document.documentElement.style.overflow = 'hidden';
@@ -40,19 +34,19 @@
     setTimeout(done, HOLD);
   }
 
-  // Fallback timeout to ensure loader proceeds even on very slow connections
-  var fontTimeout = setTimeout(startLoader, 800);
+  // Start immediately - no font dependency for the crown image
+  var fallback = setTimeout(startLoader, 300);
 
   if (document.fonts && document.fonts.load) {
     document.fonts.load('600 1em Fraunces').then(function () {
-      clearTimeout(fontTimeout);
+      clearTimeout(fallback);
       startLoader();
     }).catch(function () {
-      clearTimeout(fontTimeout);
+      clearTimeout(fallback);
       startLoader();
     });
   } else {
-    clearTimeout(fontTimeout);
+    clearTimeout(fallback);
     startLoader();
   }
 })();

@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Order tracking. Looks up an order via the `track_order`
+﻿/* ============================================================
+   Luna - Order tracking. Looks up an order via the `track_order`
    RPC (needs order number + email, so strangers can't browse orders).
    ============================================================ */
 window.LUNA.onReady(function () {

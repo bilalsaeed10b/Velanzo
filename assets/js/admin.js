@@ -1,5 +1,5 @@
-/* ============================================================
-   Luno Admin — products, categories & orders management.
+﻿/* ============================================================
+   Shahan Admin - products, categories & orders management.
    Auth + writes go through Supabase; Row Level Security on the
    server decides what an account may do (see supabase/schema.sql).
    ============================================================ */
@@ -45,7 +45,7 @@
     // (a "color image" belonging to main #main). Every image has one colorId;
     // a color is used by at most one image across the whole product.
     gallery: { mains: [], variants: [] },
-    uploadTarget: null, // {type:'main'} | {type:'variant', main:i} — where next upload lands
+    uploadTarget: null, // {type:'main'} | {type:'variant', main:i} - where next upload lands
     dragFrom: null,    // index of the main row currently being dragged
   };
 
@@ -190,7 +190,7 @@
     // Colors carry a stable id so two colors may share a display name.
     const rawColors = p ? (p.colors || []) : [{ name: 'Black', hex: '#1a1a1a' }];
     const colors = rawColors.map((c) => ({ id: c.id || uid(), name: c.name || '', hex: c.hex || '#1a1a1a' }));
-    // image_colors[i] "color" is a color id (new) or a color name (legacy) — resolve to an id.
+    // image_colors[i] "color" is a color id (new) or a color name (legacy) - resolve to an id.
     const toColorId = (v) => {
       if (!v) return '';
       const byId = colors.find((c) => c.id === v);
@@ -277,7 +277,7 @@
     })).filter((c) => c.name);
   }
 
-  /* images — one row per gallery slot (main photo). Each slot can have "color
+  /* images - one row per gallery slot (main photo). Each slot can have "color
      images" to its right, and every photo (main or color image) picks its color
      from a dropdown. A color already used by any photo is hidden from the other
      dropdowns, so a color maps to exactly one photo. In the store, the swatches
@@ -299,15 +299,11 @@
       g.variants.forEach((v) => v.colorId && s.add(v.colorId));
       return s;
     };
-    // fill any blank/stale photo with the first still-unused color
-    const fill = (o) => {
-      if (!o.colorId || !byId(o.colorId)) {
-        const used = assigned();
-        const free = colors.find((c) => !used.has(c.id));
-        o.colorId = free ? free.id : '';
-      }
-    };
-    g.mains.forEach(fill); g.variants.forEach(fill);
+    // Colors are never auto-assigned - the user picks each photo's color.
+    // Only clear a colorId that points at a deleted color, so its dropdown
+    // resets to "Pick color…" instead of showing a stale value.
+    const dropStale = (o) => { if (o.colorId && !byId(o.colorId)) o.colorId = ''; };
+    g.mains.forEach(dropStale); g.variants.forEach(dropStale);
     const optionsFor = (curId) => {
       const used = assigned();
       const avail = colors.filter((c) => c.id === curId || !used.has(c.id));
@@ -416,7 +412,7 @@
       const { error } = await sb.storage.from('product-images').upload(path, file, { cacheControl: '31536000' });
       if (error) { toast(`Upload failed: ${error.message}`); continue; }
       const { data } = sb.storage.from('product-images').getPublicUrl(path);
-      // colorId is filled with the first unused color on render
+      // No color yet - the user picks it from the dropdown (no auto-assign).
       if (target.type === 'variant') state.gallery.variants.push({ url: data.publicUrl, colorId: '', main: target.main });
       else state.gallery.mains.push({ url: data.publicUrl, colorId: '' });
       renderImages();
@@ -444,7 +440,7 @@
     if (!g.mains.length) return editorError('Upload at least one photo.');
     const all = [...g.mains, ...g.variants];
     if (all.some((x) => !x.colorId)) return editorError('Pick a color for every photo and color image.');
-    if (all.some((x) => !ids.has(x.colorId))) return editorError('A photo uses a color that was removed — re-pick it.');
+    if (all.some((x) => !ids.has(x.colorId))) return editorError('A photo uses a color that was removed - re-pick it.');
     const seen = new Set();
     const dup = all.find((x) => seen.has(x.colorId) || (seen.add(x.colorId), false));
     if (dup) return editorError(`Two photos share the color "${nameOf(dup.colorId)}". Each color can be used by one photo only.`);
@@ -476,7 +472,7 @@
     let { data, error } = await save(row);
     if (error && /image_colors/i.test(error.message)) {
       // DB migration schema4-image-colors.sql not run yet. Every image now
-      // carries a color, so we can't save without the column — block clearly.
+      // carries a color, so we can't save without the column - block clearly.
       btn.disabled = false; btn.textContent = 'Save Product';
       return editorError('Image colors need a one-time database update: run supabase/schema4-image-colors.sql in the Supabase SQL Editor, then save again.');
     }
@@ -573,7 +569,7 @@
         <td><b>${esc(o.order_number)}</b></td>
         <td>${new Date(o.created_at).toLocaleDateString()}</td>
         <td>${esc(o.customer_name)}</td>
-        <td>${esc(o.city || '—')}</td>
+        <td>${esc(o.city || '-')}</td>
         <td>${items.reduce((n, i) => n + i.qty, 0)}</td>
         <td>${money(o.total)}</td>
         <td><select class="adm-select adm-status adm-status--${o.status}" data-status="${o.id}">
@@ -608,7 +604,7 @@
       const id = sel.dataset.status;
       const status = sel.value;
       const { data, error } = await sb.from('orders').update({ status }).eq('id', id).select('id');
-      if (error || !data.length) return toast('Update failed: ' + (error ? error.message : 'no permission — sign in again'));
+      if (error || !data.length) return toast('Update failed: ' + (error ? error.message : 'no permission - sign in again'));
       const o = state.orders.find((x) => x.id === id);
       o.status = status;
       sel.className = `adm-select adm-status adm-status--${status}`;

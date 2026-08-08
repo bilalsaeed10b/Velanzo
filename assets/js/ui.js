@@ -1,5 +1,5 @@
-/* ============================================================
-   Luno — Shared UI: icons, logo, header, drawers, product cards, toast
+﻿/* ============================================================
+   Shahan - Shared UI: icons, logo, header, drawers, product cards, toast
    Injected into every page via <script>. Reads window.LUNA.
    (Internal namespace stays window.LUNA for stability.)
    ============================================================ */
@@ -36,15 +36,18 @@
   };
   window.LUNA.I = I;
 
-  /* ---------- Luno wordmark: the O is a round 3D rotating moon ---------- */
+  /* ---------- Shahan wordmark: the O is a round 3D rotating moon ---------- */
   function logoHTML() {
-    return `<span class="logo__word">LUN<span class="logo__o"><span class="moon moon--o" aria-hidden="true"></span><span>O</span></span></span>`;
+    return `
+      <img src="assets/images/logo-crown.png" alt="Shahan Crown" class="logo__img logo__img--overlay">
+      <img src="assets/images/logo.png" alt="Shahan Logo" class="logo__img logo__img--default">
+    `;
   }
   window.LUNA.logoHTML = logoHTML;
 
   /* ---------- Header markup ---------- */
   function headerHTML(overlay) {
-    const msgs = ['Free shipping on orders over PKR 3,500', 'New season — up to 40% off', 'Easy 14-day returns', 'New drops every week'];
+    const msgs = ['Free shipping on orders over PKR 3,500', 'New season - up to 40% off', 'Easy 14-day returns', 'New drops every week'];
     const ticker = msgs.concat(msgs).map((m) => `<span class="topbar__msg">${m}</span>`).join('');
     return `
     <div class="topbar"><div class="topbar__track">${ticker}</div></div>
@@ -62,9 +65,10 @@
                 <a href="coming-soon.html?dept=juniors&cat=girls">Girls</a>
               </div>
             </div>
+            <a class="nav__link" href="coming-soon.html?dept=custom">Custom Designs</a>
           </nav>
         </div>
-        <a class="logo" href="index.html" aria-label="Luno home">${logoHTML()}</a>
+        <a class="logo" href="index.html" aria-label="Shahan home">${logoHTML()}</a>
         <div class="header__right">
           <form class="search" role="search" onsubmit="return LUNA.doSearch(event)">
             <span class="search__icon">${I.search}</span>
@@ -109,6 +113,7 @@
         <a class="mmenu__link" href="coming-soon.html?dept=juniors">Juniors <span class="soon-tag">Soon</span></a>
         <a class="mmenu__link mmenu__link--sub" href="coming-soon.html?dept=juniors&cat=boys">Boys</a>
         <a class="mmenu__link mmenu__link--sub" href="coming-soon.html?dept=juniors&cat=girls">Girls</a>
+        <a class="mmenu__link" href="coming-soon.html?dept=custom">Custom Designs <span class="soon-tag">Soon</span></a>
         <a class="mmenu__link" href="collection.html?c=all&sale=1">Sale ${I.chevR}</a>
         <a class="mmenu__link" href="collection.html?c=footwear&dept=men">Footwear ${I.chevR}</a>
         <a class="mmenu__link" href="track.html">Track Order ${I.chevR}</a>
@@ -128,13 +133,13 @@
   /* ---------- Standard product card (collection / related) ---------- */
   function productCardHTML(p) {
     // A compare-at price above the selling price = on sale (drives the
-    // "Save X rs" badge automatically, regardless of the badge field).
+    // "Save X%" badge automatically, regardless of the badge field).
     const hasDiscount = p.compareAt && p.compareAt > p.price;
     const badge = hasDiscount
-      ? `<span class="prod__badge prod__badge--sale">Save ${(p.compareAt - p.price).toLocaleString('en-PK')} rs</span>`
+      ? `<span class="prod__badge prod__badge--sale">Save ${p.discount}%</span>`
       : p.badge === 'new' ? `<span class="prod__badge">New</span>` : '';
     const priceHTML = hasDiscount
-      ? `<b>${formatPrice(p.price)}</b><del>${formatPrice(p.compareAt)}</del><span class="off">Save ${(p.compareAt - p.price).toLocaleString('en-PK')} rs</span>`
+      ? `<b>${formatPrice(p.price)}</b><del>${formatPrice(p.compareAt)}</del><span class="off">Save ${p.discount}%</span>`
       : `<b>${formatPrice(p.price)}</b>`;
     const wished = Store.isWished(p.id) ? 'is-active' : '';
     const id = esc(p.id);
@@ -156,7 +161,7 @@
   }
   window.LUNA.productCardHTML = productCardHTML;
 
-  /* ---------- Feature (FEAR-style) card — big card, dots, sold-out
+  /* ---------- Feature (FEAR-style) card - big card, dots, sold-out
        Kept in the LIGHT theme (grey card, existing images). ---------- */
   function fearCardHTML(p) {
     const hasDiscount = p.compareAt && p.compareAt > p.price;
@@ -164,7 +169,7 @@
     // Top-left corner: sold-out takes priority, otherwise show the discount.
     const corner = p.soldOut
       ? `<span class="fcard__sold">Sold Out</span>`
-      : hasDiscount ? `<span class="prod__badge prod__badge--sale">Save ${(p.compareAt - p.price).toLocaleString('en-PK')} rs</span>` : '';
+      : hasDiscount ? `<span class="prod__badge prod__badge--sale">Save ${p.discount}%</span>` : '';
     const priceHTML = hasDiscount
       ? `<b>${formatPrice(p.price)}</b><del>${formatPrice(p.compareAt)}</del>`
       : `<b>${formatPrice(p.price)}</b>`;
@@ -337,7 +342,7 @@
   /* ---------- Public actions ---------- */
   window.LUNA.quickAdd = (id) => {
     const p = getProduct(id);
-    if (p.soldOut) { toast('Sorry — this item is sold out'); return; }
+    if (p.soldOut) { toast('Sorry - this item is sold out'); return; }
     Store.addToCart(id, { size: p.sizes[0], color: p.colors[0].name, qty: 1 });
     toast('Added to bag');
     openDrawer('cart');

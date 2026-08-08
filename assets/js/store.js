@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Client-side store (cart + wishlist, localStorage-backed)
+﻿/* ============================================================
+   Luna - Client-side store (cart + wishlist, localStorage-backed)
    Emits 'luna:change' on window whenever state mutates.
    ============================================================ */
 (function () {
@@ -131,7 +131,7 @@
 
   // Drop bag/wishlist entries whose product no longer exists in the
   // catalog (e.g. deleted in the admin panel). Only when the catalog
-  // actually loaded — never wipe the bag on a network failure.
+  // actually loaded - never wipe the bag on a network failure.
   if (window.LUNA.ready) window.LUNA.ready.then(() => {
     if (!window.LUNA.live || !window.LUNA.products.length) return;
     const known = (id) => !!window.LUNA.getProduct(id);

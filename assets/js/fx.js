@@ -1,5 +1,5 @@
-/* ============================================================
-   Luno — Motion & 3D FX
+﻿/* ============================================================
+   Shahan - Motion & 3D FX
    - Scroll reveals: elements tilt-in with a subtle 3D rotate
    - Parallax: hero / lookbook imagery drifts while scrolling
    - Pointer tilt: cards rotate in 3D toward the cursor
@@ -139,7 +139,7 @@
 
   /* ---------- Interactive Moon Rotation & 3D Tilt ---------- */
   function initMoonInteractivity() {
-    // Skip moons upgraded to the real 3D model (.moon--3d) — those are
+    // Skip moons upgraded to the real 3D model (.moon--3d) - those are
     // driven by <model-viewer>'s own camera controls, not the CSS surface.
     var moons = Array.prototype.slice.call(document.querySelectorAll('.moon:not(.moon--3d)'));
     if (!moons.length) return;

@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Product detail page
+﻿/* ============================================================
+   Luna - Product detail page
    ============================================================ */
 window.LUNA.onReady(function () {
   const { products, getProduct, formatPrice, productCardHTML, Store, I, esc } = window.LUNA;
@@ -20,7 +20,7 @@ window.LUNA.onReady(function () {
 
   function priceHTML() {
     return hasDiscount
-      ? `<b>${formatPrice(p.price)}</b><del>${formatPrice(p.compareAt)}</del><span class="off">Save ${(p.compareAt - p.price).toLocaleString('en-PK')} rs</span>`
+      ? `<b>${formatPrice(p.price)}</b><del>${formatPrice(p.compareAt)}</del><span class="off">Save ${p.discount}%</span>`
       : `<b>${formatPrice(p.price)}</b>`;
   }
 
@@ -40,7 +40,7 @@ window.LUNA.onReady(function () {
       </div>
       <div class="pdp__details">
         ${hasDiscount
-          ? `<span class="eyebrow" style="color:var(--sale)">Save ${(p.compareAt - p.price).toLocaleString('en-PK')} rs</span>`
+          ? `<span class="eyebrow" style="color:var(--sale)">Save ${p.discount}%</span>`
           : (p.badge === 'new' ? `<span class="eyebrow" style="color:var(--sale)">New Arrival</span>` : '')}
         <h1 class="pdp__title">${esc(p.name)}</h1>
         <p class="pdp__sub">${esc(p.subtitle)}</p>
@@ -85,7 +85,7 @@ window.LUNA.onReady(function () {
   wishBtn.classList.toggle('is-active', Store.isWished(p.id));
 
   // Gallery: one slide per gallery slot (main photo). Each slot has its own set
-  // of colours — its main photo's colour plus its "color images". The swatches
+  // of colours - its main photo's colour plus its "color images". The swatches
   // show only the colours of the slot you're viewing; picking one swaps that
   // slot's image in place. Swiping / thumbnails move between slots.
   const stage = root.querySelector('[data-stage]');
@@ -150,7 +150,7 @@ window.LUNA.onReady(function () {
     syncColorLabel();
   }
   // next button only when the strip overflows by a usable amount (a few px of
-  // sub-pixel rounding — e.g. Windows 125% display scaling — must not count)
+  // sub-pixel rounding - e.g. Windows 125% display scaling - must not count)
   function updateThumbNav() {
     const vertical = getComputedStyle(thumbsEl).flexDirection === 'column';
     const over = vertical
@@ -162,7 +162,7 @@ window.LUNA.onReady(function () {
   window.addEventListener('load', updateThumbNav);
   // Open on the cover slot with its colour selected.
   goTo(0, false);
-  updateThumbNav(); // sync — rAF may never fire in a background tab
+  updateThumbNav(); // sync - rAF may never fire in a background tab
   requestAnimationFrame(updateThumbNav); // and re-check once painted
 
   nextBtn.addEventListener('click', () => {
@@ -239,5 +239,5 @@ window.LUNA.onReady(function () {
     .slice(0, 4);
   root.querySelector('[data-related]').innerHTML = related.map(productCardHTML).join('');
 
-  document.title = `${p.name} — Luno`;
+  document.title = `${p.name} - Shahan`;
 });

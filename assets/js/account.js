@@ -1,7 +1,7 @@
-/* ============================================================
-   Luna — Account page: customer sign in / sign up (email or
+﻿/* ============================================================
+   Luna - Account page: customer sign in / sign up (email or
    Google), saved profile details, and order history.
-   All access is enforced by RLS — users only ever see their own
+   All access is enforced by RLS - users only ever see their own
    profile, cart, and orders.
    ============================================================ */
 window.LUNA.onReady(function () {
@@ -14,7 +14,7 @@ window.LUNA.onReady(function () {
   if (!sb) {
     root.innerHTML = `<div class="acc-card" style="text-align:center">
       <h1 class="sec-title">Account</h1>
-      <p style="color:var(--ink-2);margin-top:1rem">Accounts are not available yet — the store is still being set up.</p></div>`;
+      <p style="color:var(--ink-2);margin-top:1rem">Accounts are not available yet - the store is still being set up.</p></div>`;
     return;
   }
 
@@ -25,8 +25,8 @@ window.LUNA.onReady(function () {
   function renderAuth(message) {
     root.innerHTML = `
     <div class="acc-card">
-      <h1 class="sec-title" style="text-align:center;margin-bottom:.5rem">${mode === 'signin' ? 'Welcome Back' : 'Join Luno'}</h1>
-      <p style="text-align:center;color:var(--ink-2);margin-bottom:2rem">Your bag, wishlist and orders — saved to your account.</p>
+      <h1 class="sec-title" style="text-align:center;margin-bottom:.5rem">${mode === 'signin' ? 'Welcome Back' : 'Join Shahan'}</h1>
+      <p style="text-align:center;color:var(--ink-2);margin-bottom:2rem">Your bag, wishlist and orders - saved to your account.</p>
       <div class="acc-tabs">
         <button data-mode="signin" class="${mode === 'signin' ? 'is-active' : ''}">Sign In</button>
         <button data-mode="signup" class="${mode === 'signup' ? 'is-active' : ''}">Create Account</button>
@@ -82,7 +82,7 @@ window.LUNA.onReady(function () {
           });
           if (error) throw error;
           if (!data.session) {
-            say('Account created — check your email inbox to confirm, then sign in.', true);
+            say('Account created - check your email inbox to confirm, then sign in.', true);
             btn.disabled = false;
             btn.textContent = 'Create Account';
             return;
@@ -102,7 +102,7 @@ window.LUNA.onReady(function () {
     });
 
     root.querySelector('[data-google]').addEventListener('click', async () => {
-      if (location.protocol === 'file:') return say('Google sign-in needs the site served over http — run "node server.mjs" and open http://localhost:4321/account.html');
+      if (location.protocol === 'file:') return say('Google sign-in needs the site served over http - run "node server.mjs" and open http://localhost:4321/account.html');
       const { error } = await sb.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: location.origin + location.pathname },

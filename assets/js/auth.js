@@ -1,5 +1,5 @@
-/* ============================================================
-   Luna — Shared Supabase client + auth state (all pages).
+﻿/* ============================================================
+   Luna - Shared Supabase client + auth state (all pages).
    Requires the supabase-js CDN script and supabase-config.js
    to be loaded first. Emits 'luna:auth' with the user (or null)
    on load and whenever the session changes.
