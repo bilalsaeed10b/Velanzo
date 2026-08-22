@@ -67,9 +67,12 @@ framework required.
 ## Customizing
 
 - **Colors / fonts / spacing:** edit `assets/css/tokens.css` only.
-- **Products:** edit the `RAW` array in `assets/js/data.js`.
-- **Real images:** replace the `img()` helper in `data.js` and the `picsum.photos`
-  URLs in `index.html` with your own asset paths.
+- **Products:** add and edit them in the admin panel (`admin.html`). The catalog
+  lives in Supabase — `assets/js/data.js` only reads it, so there is nothing to
+  edit there. To load products in bulk, run a SQL file in the Supabase SQL
+  Editor; `supabase/seed-catalog.sql` is the current catalog seed.
+- **Real images:** upload them per product in the admin panel. They go to the
+  `product-images` storage bucket and the public URL is written into the row.
 
 ## Notes
 
