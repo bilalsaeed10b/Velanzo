@@ -971,7 +971,7 @@ html { overflow-x: clip; }
 }
 .loader.is-done { opacity: 0; visibility: hidden; }
 .loader__crown {
-  width: clamp(100px, 30vw, 220px);
+  width: clamp(80px, 20vw, 150px);
   height: auto;
   animation: crownBlink 1.4s ease-in-out infinite;
 }
