@@ -735,7 +735,7 @@
       <div class="adm-tiles">
         ${tile('Revenue', money(revenue), `${money(rev30)} last 30 days`)}
         ${tile('Orders', orders.length, `${orders.filter(since(7)).length} in last 7 days`)}
-        ${tile('Pending orders', byStatus.pending, `${byStatus.confirmed} confirmed · ${byStatus.shipped} shipped`)}
+        ${tile('Pending orders', byStatus.pending)}
         ${tile('Avg. order value', money(live.length ? Math.round(revenue / live.length) : 0), `${byStatus.cancelled} cancelled`)}
         ${tile('New inquiries', newInq, `${quotes30} quotation requests in 30 days`)}
         ${tile('Products live', activeProducts, `${soldOut} sold out`)}
