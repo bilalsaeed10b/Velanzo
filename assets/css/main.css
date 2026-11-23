@@ -120,10 +120,10 @@ ul { list-style: none; padding: 0; }
   align-items: center;
 }
 .logo__img {
-  height: calc(var(--header-h) + 4px);
+  height: calc(var(--header-h) - 16px);
   width: auto;
   display: block;
-  margin-top: -4px;
+  margin-top: 0;
   transition: height var(--dur) var(--ease), margin-top var(--dur) var(--ease);
 }
 .header--overlay .logo__img {
