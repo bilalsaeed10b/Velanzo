@@ -120,7 +120,7 @@ ul { list-style: none; padding: 0; }
   align-items: center;
 }
 .logo__img {
-  height: calc(var(--header-h) - 16px);
+  height: calc(var(--header-h) - 28px);
   width: auto;
   display: block;
   margin-top: 0;
