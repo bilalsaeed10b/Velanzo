@@ -11,13 +11,13 @@ window.LUNA.onReady(function () {
   const errEl = root.querySelector('[data-tr-error]');
   const resultEl = root.querySelector('[data-tr-result]');
   const submitBtn = root.querySelector('[data-tr-submit]');
-  const STEPS = ['pending', 'confirmed', 'shipped', 'delivered'];
+  const STEPS = ['pending', 'delivered'];
   const LABELS = { pending: 'Order Placed', confirmed: 'Confirmed', shipped: 'Shipped', delivered: 'Delivered' };
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
   function render(o) {
     const cancelled = o.status === 'cancelled';
-    const reached = STEPS.indexOf(o.status);
+    const reached = Math.max(0, STEPS.indexOf(o.status)); // legacy confirmed/shipped -> placed
     const steps = cancelled
       ? `<div class="tr-cancel">This order was cancelled. Contact us if this is unexpected.</div>`
       : `<div class="tr-steps">${STEPS.map((s, i) =>

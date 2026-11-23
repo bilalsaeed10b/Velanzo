@@ -568,7 +568,7 @@
 
   /* ================= ORDERS ================= */
 
-  const STATUSES = ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+  const STATUSES = ['pending', 'delivered', 'cancelled'];
 
   function renderOrders() {
     const list = state.orders.filter((o) => !state.orderFilter || o.status === state.orderFilter);
@@ -589,7 +589,7 @@
         <td>${items.reduce((n, i) => n + i.qty, 0)}</td>
         <td>${money(o.total)}</td>
         <td><select class="adm-select adm-status adm-status--${o.status}" data-status="${o.id}">
-          ${STATUSES.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
+          ${(STATUSES.includes(o.status) ? STATUSES : [o.status, ...STATUSES]).map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
         </select></td>
         <td><div class="adm-actions">
           <button class="adm-btn adm-btn--ghost" data-order-open="${o.id}">Details</button>
@@ -735,7 +735,7 @@
       <div class="adm-tiles">
         ${tile('Revenue', money(revenue), `${money(rev30)} last 30 days`)}
         ${tile('Orders', orders.length, `${orders.filter(since(7)).length} in last 7 days`)}
-        ${tile('Pending orders', byStatus.pending)}
+        ${tile('Pending orders', byStatus.pending, `${byStatus.delivered} delivered`)}
         ${tile('Avg. order value', money(live.length ? Math.round(revenue / live.length) : 0), `${byStatus.cancelled} cancelled`)}
         ${tile('New inquiries', newInq, `${quotes30} quotation requests in 30 days`)}
         ${tile('Products live', activeProducts, `${soldOut} sold out`)}
