@@ -40,7 +40,7 @@
   function logoHTML() {
     return `
       <img src="assets/images/velanzo-logo-color.png" alt="Velanzo" class="logo__img logo__img--overlay">
-      <img src="assets/images/velanzo-logo-bw.png" alt="Velanzo" class="logo__img logo__img--default">
+      <img src="assets/images/velanzo-logo-bw.jpg" alt="Velanzo" class="logo__img logo__img--default">
     `;
   }
   window.LUNA.logoHTML = logoHTML;

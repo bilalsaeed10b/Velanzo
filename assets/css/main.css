@@ -127,8 +127,8 @@ ul { list-style: none; padding: 0; }
   transition: height var(--dur) var(--ease), margin-top var(--dur) var(--ease);
 }
 .header--overlay .logo__img {
-  height: calc(var(--header-h) + 18px);
-  margin-top: 2px;
+  height: calc(var(--header-h) - 6px);
+  margin-top: 0;
 }
 .logo__img--overlay { display: none; }
 .header--overlay .logo__img--default { display: none; }
