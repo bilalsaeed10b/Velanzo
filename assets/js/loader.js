@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Loading screen
+   Velanzo - Loading screen
    Shows the crown logo with a blinking animation, then removes
    the overlay. Loads first so the white cover is shown before
    the rest of the page scripts.
@@ -9,7 +9,7 @@
   if (!el) return;
 
   el.innerHTML =
-    '<img class="loader__crown" src="assets/images/logo-crown.png" alt="Shahan">';
+    '<img class="loader__crown" src="assets/images/logo-crown.png" alt="Velanzo">';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var HOLD = reduce ? 500 : 2300;

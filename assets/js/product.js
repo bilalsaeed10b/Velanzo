@@ -239,5 +239,5 @@ window.LUNA.onReady(function () {
     .slice(0, 4);
   root.querySelector('[data-related]').innerHTML = related.map(productCardHTML).join('');
 
-  document.title = `${p.name} - Shahan`;
+  document.title = `${p.name} - Velanzo`;
 });

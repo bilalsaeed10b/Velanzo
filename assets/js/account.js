@@ -25,7 +25,7 @@ window.LUNA.onReady(function () {
   function renderAuth(message) {
     root.innerHTML = `
     <div class="acc-card">
-      <h1 class="sec-title" style="text-align:center;margin-bottom:.5rem">${mode === 'signin' ? 'Welcome Back' : 'Join Shahan'}</h1>
+      <h1 class="sec-title" style="text-align:center;margin-bottom:.5rem">${mode === 'signin' ? 'Welcome Back' : 'Join Velanzo'}</h1>
       <p style="text-align:center;color:var(--ink-2);margin-bottom:2rem">Your bag, wishlist and orders - saved to your account.</p>
       <div class="acc-tabs">
         <button data-mode="signin" class="${mode === 'signin' ? 'is-active' : ''}">Sign In</button>

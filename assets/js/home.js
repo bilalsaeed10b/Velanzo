@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Homepage behaviour: hero slider + feature grids (FEAR-style)
+   Velanzo - Homepage behaviour: hero slider + feature grids (FEAR-style)
    ============================================================ */
 (function () {
   const { products } = window.LUNA;

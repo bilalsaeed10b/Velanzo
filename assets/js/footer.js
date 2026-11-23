@@ -1,9 +1,9 @@
 ﻿/* ============================================================
-   Shahan - Footer render + misc icon injection
+   Velanzo - Footer render + misc icon injection
    ============================================================ */
 (function () {
   const I = window.LUNA.I;
-  const logo = window.LUNA.logoHTML ? window.LUNA.logoHTML() : 'SHAHAN';
+  const logo = window.LUNA.logoHTML ? window.LUNA.logoHTML() : 'VELANZO';
 
   const footerHTML = `
   <footer class="footer">
@@ -36,7 +36,7 @@
         </div>
         <div class="footer__col">
           <h5>Company</h5>
-          <a href="about.html">About Shahan</a>
+          <a href="about.html">About Velanzo</a>
           <a href="#">Stores</a>
           <a href="why-choose-us.html">Why Choose Us</a>
           <a href="#">Privacy Policy</a>
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <p>© ${new Date().getFullYear()} Shahan. All rights reserved. A demo storefront - not a real store.</p>
+        <p>© ${new Date().getFullYear()} Velanzo. All rights reserved. A demo storefront - not a real store.</p>
         <div class="footer__pay">
           <span>VISA</span><span>MASTERCARD</span><span>COD</span><span>EASYPAISA</span>
         </div>

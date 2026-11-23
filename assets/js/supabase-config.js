@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Supabase connection settings.
+   Velanzo - Supabase connection settings.
    Paste your project's URL and anon key here (Supabase Dashboard
    -> Settings -> API). The anon key is SAFE to expose publicly;
    Row Level Security enforces all permissions server-side.

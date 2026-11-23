@@ -1,5 +1,5 @@
 -- ============================================================
--- Shahan - catalog seed. Run ONCE in the Supabase SQL Editor
+-- Velanzo - catalog seed. Run ONCE in the Supabase SQL Editor
 -- (Dashboard -> SQL Editor -> New query -> paste -> Run).
 --
 -- What this does, in one transaction:

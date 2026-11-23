@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan Admin - products, categories & orders management.
+   Velanzo Admin - products, categories & orders management.
    Auth + writes go through Supabase; Row Level Security on the
    server decides what an account may do (see supabase/schema.sql).
    ============================================================ */

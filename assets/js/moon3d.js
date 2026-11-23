@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Real 3D moon (assets/3d/moon.glb)
+   Velanzo - Real 3D moon (assets/3d/moon.glb)
    Renders the real GLB via <model-viewer>. Two flavours:
      • BIG   - page-hero + footer showcase moons: drag-to-spin,
                auto-rotating, camera-controls enabled.

@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Motion & 3D FX
+   Velanzo - Motion & 3D FX
    - Scroll reveals: elements tilt-in with a subtle 3D rotate
    - Parallax: hero / lookbook imagery drifts while scrolling
    - Pointer tilt: cards rotate in 3D toward the cursor

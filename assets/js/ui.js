@@ -1,5 +1,5 @@
 ﻿/* ============================================================
-   Shahan - Shared UI: icons, logo, header, drawers, product cards, toast
+   Velanzo - Shared UI: icons, logo, header, drawers, product cards, toast
    Injected into every page via <script>. Reads window.LUNA.
    (Internal namespace stays window.LUNA for stability.)
    ============================================================ */
@@ -36,11 +36,11 @@
   };
   window.LUNA.I = I;
 
-  /* ---------- Shahan wordmark: the O is a round 3D rotating moon ---------- */
+  /* ---------- Velanzo wordmark: the O is a round 3D rotating moon ---------- */
   function logoHTML() {
     return `
-      <img src="assets/images/logo-crown.png" alt="Shahan Crown" class="logo__img logo__img--overlay">
-      <img src="assets/images/logo.png" alt="Shahan Logo" class="logo__img logo__img--default">
+      <img src="assets/images/velanzo-logo-color.png" alt="Velanzo" class="logo__img logo__img--overlay">
+      <img src="assets/images/velanzo-logo-bw.png" alt="Velanzo" class="logo__img logo__img--default">
     `;
   }
   window.LUNA.logoHTML = logoHTML;
@@ -68,7 +68,7 @@
             <a class="nav__link" href="coming-soon.html?dept=custom">Custom Designs</a>
           </nav>
         </div>
-        <a class="logo" href="index.html" aria-label="Shahan home">${logoHTML()}</a>
+        <a class="logo" href="index.html" aria-label="Velanzo home">${logoHTML()}</a>
         <div class="header__right">
           <form class="search" role="search" onsubmit="return LUNA.doSearch(event)">
             <span class="search__icon">${I.search}</span>
