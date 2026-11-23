@@ -73,6 +73,11 @@ once. It lets admins delete orders from Admin → Orders.
 In **SQL Editor**, run [`supabase/schema7-order-paid.sql`](supabase/schema7-order-paid.sql)
 once. It adds the "Paid" checkbox in Admin → Orders; only paid orders count as received.
 
+## 3g. WhatsApp alerts for inquiries (migration 8)
+
+Follow the steps at the top of [`supabase/schema8-whatsapp-alerts.sql`](supabase/schema8-whatsapp-alerts.sql)
+to get a free CallMeBot key, paste your number + key into the last statement, and run it.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the

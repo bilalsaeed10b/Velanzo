@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <p>© ${new Date().getFullYear()} Velanzo. All rights reserved. A demo storefront - not a real store.</p>
+        <p>© ${new Date().getFullYear()} Velanzo. All rights reserved.</p>
         <div class="footer__pay">
           <span>VISA</span><span>MASTERCARD</span><span>COD</span><span>EASYPAISA</span>
         </div>
