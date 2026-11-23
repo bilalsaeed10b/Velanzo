@@ -273,3 +273,12 @@ input, select, textarea { font: inherit; }
 .adm-unread td { font-weight: 600; background: #fffdf3; }
 .adm-msg { white-space: pre-wrap; margin: .2rem 0; line-height: 1.5; }
 @media (max-width: 720px) { .adm-dash-grid { grid-template-columns: 1fr; } }
+
+/* ---------- delete-order confirm ---------- */
+.adm-confirm { width: min(440px, 94vw); }
+.adm-confirm__body { padding: 1.4rem 1.5rem; }
+.adm-confirm__body h3 { margin: 0 0 .6rem; }
+.adm-confirm__body p { margin: 0 0 .6rem; line-height: 1.5; }
+.adm-btn--danger:disabled { opacity: .5; cursor: not-allowed; }
+.adm-btn--danger.is-armed { background: #c0392b; color: #fff; border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.25); }
+.adm-btn--danger.is-armed:hover { background: #a93226; border-color: #a93226; }

@@ -172,6 +172,19 @@
     </form>
   </dialog>
 
+  <!-- ======== DELETE ORDER CONFIRM ======== -->
+  <dialog class="adm-dialog adm-confirm" data-del-order>
+    <div class="adm-confirm__body">
+      <h3>Delete order <span data-del-order-num></span>?</h3>
+      <p>This permanently removes the order and its items. It cannot be undone.</p>
+      <p class="adm-hint" data-del-order-wait></p>
+      <div class="adm-editor__foot">
+        <button type="button" class="adm-btn adm-btn--ghost" data-del-order-cancel>Cancel</button>
+        <button type="button" class="adm-btn adm-btn--danger" data-del-order-ok disabled>Delete (5)</button>
+      </div>
+    </div>
+  </dialog>
+
   <div class="adm-toast" data-toast></div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>

@@ -63,6 +63,11 @@ once (after `schema4-image-colors.sql`). It adds the `inquiries` table used by t
 "Get Quotation" dialog and contact form (Admin → Inquiries), and rate limits every
 endpoint: orders, order tracking, inquiries, and writes to carts, profiles and admin tables.
 
+## 3e. Order deletion (migration 6)
+
+In **SQL Editor**, run [`supabase/schema6-order-delete.sql`](supabase/schema6-order-delete.sql)
+once. It lets admins delete orders from Admin → Orders.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the

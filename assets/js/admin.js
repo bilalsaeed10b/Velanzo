@@ -591,7 +591,10 @@
         <td><select class="adm-select adm-status adm-status--${o.status}" data-status="${o.id}">
           ${STATUSES.map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
         </select></td>
-        <td><button class="adm-btn adm-btn--ghost" data-order-open="${o.id}">Details</button></td>
+        <td><div class="adm-actions">
+          <button class="adm-btn adm-btn--ghost" data-order-open="${o.id}">Details</button>
+          <button class="adm-btn adm-btn--danger" data-order-del="${o.id}">Delete</button>
+        </div></td>
       </tr>
       <tr class="adm-order-detail" data-order-detail="${o.id}" hidden><td colspan="8"><div class="inner">
         <div>
@@ -616,6 +619,8 @@
       row.hidden = !row.hidden;
     }));
 
+    $$('[data-order-del]').forEach((b) => b.addEventListener('click', () => confirmDeleteOrder(b.dataset.orderDel)));
+
     $$('[data-status]').forEach((sel) => sel.addEventListener('change', async () => {
       const id = sel.dataset.status;
       const status = sel.value;
@@ -627,6 +632,53 @@
       toast(`Order ${o.order_number} → ${status}`);
     }));
   }
+
+  /* delete order: confirm dialog, button unlocks (red) after 5 seconds */
+  const delDlg = $('[data-del-order]');
+  const delOk = $('[data-del-order-ok]');
+  let delTimer = null, delId = null;
+
+  function confirmDeleteOrder(id) {
+    const o = state.orders.find((x) => x.id === id);
+    if (!o) return;
+    delId = id;
+    $('[data-del-order-num]').textContent = o.order_number;
+    let left = 5;
+    delOk.disabled = true;
+    delOk.classList.remove('is-armed');
+    delOk.textContent = `Delete (${left})`;
+    $('[data-del-order-wait]').textContent = 'Please wait 5 seconds before confirming.';
+    clearInterval(delTimer);
+    delTimer = setInterval(() => {
+      left--;
+      if (left > 0) { delOk.textContent = `Delete (${left})`; return; }
+      clearInterval(delTimer);
+      delOk.disabled = false;
+      delOk.classList.add('is-armed');
+      delOk.textContent = 'Delete Order';
+      $('[data-del-order-wait]').textContent = '';
+    }, 1000);
+    delDlg.showModal();
+  }
+
+  delDlg.addEventListener('close', () => { clearInterval(delTimer); delId = null; });
+  $('[data-del-order-cancel]').addEventListener('click', () => delDlg.close());
+
+  delOk.addEventListener('click', async () => {
+    if (!delId || delOk.disabled) return;
+    const id = delId;
+    delOk.disabled = true; delOk.textContent = 'Deleting…';
+    const { data, error } = await sb.from('orders').delete().eq('id', id).select('id');
+    if (error || !data.length) {
+      delDlg.close();
+      return toast('Delete failed: ' + (error ? error.message : 'no permission - run supabase/schema6-order-delete.sql'));
+    }
+    const o = state.orders.find((x) => x.id === id);
+    state.orders = state.orders.filter((x) => x.id !== id);
+    delDlg.close();
+    renderOrders();
+    toast(`Order ${o ? o.order_number : ''} deleted`);
+  });
 
   $('[data-order-filter]').addEventListener('change', (e) => {
     state.orderFilter = e.target.value;
