@@ -9,7 +9,7 @@
   if (!el) return;
 
   el.innerHTML =
-    '<img class="loader__crown" src="assets/images/logo-crown.png" alt="Velanzo">';
+    '<img class="loader__crown" src="assets/images/velanzo-logo-bw.png" alt="Velanzo">';
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var HOLD = reduce ? 500 : 2300;
