@@ -13,8 +13,8 @@
           <span class="logo">${logo}</span>
           <p>Modern essentials and seasonal apparel, designed in a refined monochrome palette for everyday wear.</p>
           <div class="footer__social">
-            <a href="https://www.instagram.com/stylistwear" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${I.ig}</a>
-            <a href="https://www.facebook.com/profile.php?id=61572334771470" target="_blank" rel="noopener noreferrer" aria-label="Facebook">${I.fb}</a>
+            <a href="https://www.instagram.com/velanzoclothing" target="_blank" rel="noopener noreferrer" aria-label="Instagram">${I.ig}</a>
+            <a href="https://www.facebook.com/velanzoclothing" target="_blank" rel="noopener noreferrer" aria-label="Facebook">${I.fb}</a>
           </div>
         </div>
         <div class="footer__col">
