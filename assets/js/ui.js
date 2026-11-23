@@ -47,8 +47,10 @@
 
   /* ---------- Header markup ---------- */
   function headerHTML(overlay) {
-    const msgs = ['Free shipping on orders over PKR 3,500', 'New season - up to 40% off', 'Easy 14-day returns', 'New drops every week'];
-    const ticker = msgs.concat(msgs).map((m) => `<span class="topbar__msg">${m}</span>`).join('');
+    const ig = '<a class="topbar__link" href="https://www.instagram.com/velanzoclothing" target="_blank" rel="noopener noreferrer" tabindex="-1">Visit our Instagram Page</a>';
+    const msgs = ['New Arrivals', 'We offer Bulk Orders and Manufacturing', ig];
+    // 4 copies so the loop never shows a gap on wide screens (track scrolls by half).
+    const ticker = [].concat(msgs, msgs, msgs, msgs).map((m) => `<span class="topbar__msg">${m}</span>`).join('');
     return `
     <div class="topbar"><div class="topbar__track">${ticker}</div></div>
     <header class="header ${overlay ? 'header--overlay' : ''}" id="site-header">
