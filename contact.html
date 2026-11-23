@@ -30,7 +30,7 @@
     <!-- Form + info cards -->
     <section class="section container" style="padding-top:clamp(24px,4vw,48px)">
       <div class="contact-grid">
-        <form class="contact-form" onsubmit="LUNA.toast('Message sent - we\'ll reply within 24 hours');this.reset();return false;">
+        <form class="contact-form" data-contact-form>
           <div class="field">
             <label class="pdp__label" for="cf-name">Name</label>
             <input class="input" id="cf-name" type="text" placeholder="Your name" required />
@@ -111,6 +111,7 @@
   <script src="assets/js/footer.js"></script>
   <script src="assets/js/moon3d.js"></script>
   <script src="assets/js/fx.js"></script>
+  <script src="assets/js/inquiry.js"></script>
   <script>
     // FAQ accordion (reuses PDP accordion styles)
     document.addEventListener('DOMContentLoaded', function () {

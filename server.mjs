@@ -25,7 +25,24 @@ const MIME = {
   '.glb': 'model/gltf-binary',
 };
 
+// Per-IP rate limit: 300 requests / minute (fixed window).
+const RL_MAX = 300, RL_WINDOW = 60_000;
+const hits = new Map();
+setInterval(() => { const now = Date.now(); for (const [k, v] of hits) if (now - v.start > RL_WINDOW) hits.delete(k); }, RL_WINDOW).unref();
+function limited(req) {
+  const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+  const now = Date.now();
+  let h = hits.get(ip);
+  if (!h || now - h.start > RL_WINDOW) { h = { start: now, n: 0 }; hits.set(ip, h); }
+  return ++h.n > RL_MAX;
+}
+
 const server = createServer(async (req, res) => {
+  if (limited(req)) {
+    res.writeHead(429, { 'Content-Type': 'text/plain', 'Retry-After': '60' });
+    res.end('Too many requests');
+    return;
+  }
   try {
     let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
     if (urlPath === '/') urlPath = '/index.html';

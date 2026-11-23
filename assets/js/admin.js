@@ -34,7 +34,11 @@
   const sb = window.supabase.createClient(cfg.url, cfg.anonKey);
 
   const state = {
-    tab: 'products',
+    tab: 'dashboard',
+    inquiries: [],
+    inqError: '',
+    inqFilter: '',
+    inqKind: '',
     products: [],
     categories: [],
     orders: [],
@@ -111,6 +115,16 @@
     state.products = p.data;
     state.categories = c.data;
     state.orders = o.data;
+    const q = await sb.from('inquiries').select('*').order('created_at', { ascending: false }).limit(1000);
+    state.inquiries = q.error ? [] : q.data;
+    state.inqError = q.error ? 'Inquiries table not found - run supabase/schema5-inquiries-ratelimit.sql.' : '';
+    updateInqBadge();
+  }
+
+  function updateInqBadge() {
+    const n = state.inquiries.filter((i) => i.status === 'new').length;
+    const b = $('[data-inq-badge]');
+    b.textContent = n; b.hidden = !n;
   }
 
   /* ================= TABS ================= */
@@ -123,6 +137,8 @@
 
   function renderTab() {
     $$('[data-panel]').forEach((p) => { p.hidden = p.dataset.panel !== state.tab; });
+    if (state.tab === 'dashboard') renderDashboard();
+    if (state.tab === 'inquiries') renderInquiries();
     if (state.tab === 'products') renderProducts();
     if (state.tab === 'categories') renderCategories();
     if (state.tab === 'orders') renderOrders();
@@ -616,6 +632,163 @@
     state.orderFilter = e.target.value;
     renderOrders();
   });
+
+  /* ================= DASHBOARD ================= */
+
+  const DAY = 86400000;
+  const fmtDate = (d) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+
+  function renderDashboard() {
+    const orders = state.orders;
+    const live = orders.filter((o) => o.status !== 'cancelled');
+    const now = Date.now();
+    const since = (days) => (o) => now - new Date(o.created_at) < days * DAY;
+    const revenue = live.reduce((n, o) => n + (o.total || 0), 0);
+    const rev30 = live.filter(since(30)).reduce((n, o) => n + (o.total || 0), 0);
+    const byStatus = Object.fromEntries(STATUSES.map((s) => [s, orders.filter((o) => o.status === s).length]));
+    const newInq = state.inquiries.filter((i) => i.status === 'new').length;
+    const quotes30 = state.inquiries.filter((i) => i.kind === 'quotation' && since(30)(i)).length;
+    const activeProducts = state.products.filter((p) => p.active).length;
+    const soldOut = state.products.filter((p) => p.active && p.sold_out).length;
+
+    // Orders per day, last 14 days (single series).
+    const days = [...Array(14)].map((_, k) => {
+      const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (13 - k));
+      return { d, n: 0, rev: 0 };
+    });
+    live.forEach((o) => {
+      const t = new Date(o.created_at); t.setHours(0, 0, 0, 0);
+      const slot = days.find((x) => x.d.getTime() === t.getTime());
+      if (slot) { slot.n++; slot.rev += o.total || 0; }
+    });
+    const max = Math.max(1, ...days.map((x) => x.n));
+
+    // Top products by units sold.
+    const units = {};
+    live.forEach((o) => (o.order_items || []).forEach((it) => {
+      units[it.name] = units[it.name] || { qty: 0, rev: 0 };
+      units[it.name].qty += it.qty; units[it.name].rev += it.price * it.qty;
+    }));
+    const top = Object.entries(units).sort((a, b) => b[1].qty - a[1].qty).slice(0, 5);
+
+    // Recent activity: orders + inquiries merged.
+    const activity = [
+      ...orders.slice(0, 10).map((o) => ({ t: o.created_at, html: `New order <b>${esc(o.order_number)}</b> from ${esc(o.customer_name)} · ${money(o.total)}` })),
+      ...state.inquiries.slice(0, 10).map((i) => ({ t: i.created_at, html: `${i.kind === 'quotation' ? 'Quotation request' : 'Message'} from <b>${esc(i.name)}</b>${i.company ? ' (' + esc(i.company) + ')' : ''}` })),
+    ].sort((a, b) => new Date(b.t) - new Date(a.t)).slice(0, 8);
+
+    const tile = (label, value, sub) => `<div class="adm-tile"><span class="adm-tile__label">${label}</span><span class="adm-tile__value">${value}</span>${sub ? `<span class="adm-tile__sub">${sub}</span>` : ''}</div>`;
+
+    $('[data-dash]').innerHTML = `
+      <div class="adm-tiles">
+        ${tile('Revenue', money(revenue), `${money(rev30)} last 30 days`)}
+        ${tile('Orders', orders.length, `${orders.filter(since(7)).length} in last 7 days`)}
+        ${tile('Pending orders', byStatus.pending, `${byStatus.confirmed} confirmed · ${byStatus.shipped} shipped`)}
+        ${tile('Avg. order value', money(live.length ? Math.round(revenue / live.length) : 0), `${byStatus.cancelled} cancelled`)}
+        ${tile('New inquiries', newInq, `${quotes30} quotation requests in 30 days`)}
+        ${tile('Products live', activeProducts, `${soldOut} sold out`)}
+      </div>
+
+      <div class="adm-dash-grid">
+        <div class="adm-card adm-card--wide">
+          <h3>Orders per day <span class="adm-hint">last 14 days</span></h3>
+          <div class="adm-bars" role="img" aria-label="Orders per day over the last 14 days">
+            ${days.map((x) => `<div class="adm-bar" tabindex="0" data-tip="${fmtDate(x.d)}: ${x.n} order${x.n === 1 ? '' : 's'} · ${money(x.rev)}">
+              <span class="adm-bar__fill" style="height:${(x.n / max) * 100}%"></span>
+            </div>`).join('')}
+          </div>
+          <div class="adm-bars__axis"><span>${fmtDate(days[0].d)}</span><span>${fmtDate(days[13].d)}</span></div>
+          <details class="adm-hint"><summary>Show as table</summary>
+            <table class="adm-table adm-table--mini">${days.map((x) => `<tr><td>${fmtDate(x.d)}</td><td>${x.n}</td><td>${money(x.rev)}</td></tr>`).join('')}</table>
+          </details>
+        </div>
+
+        <div class="adm-card">
+          <h3>Orders by status</h3>
+          ${STATUSES.map((s) => `<div class="adm-row"><span class="adm-status--${s}">${s[0].toUpperCase() + s.slice(1)}</span><b>${byStatus[s]}</b></div>`).join('')}
+        </div>
+
+        <div class="adm-card">
+          <h3>Top products</h3>
+          ${top.length ? top.map(([n, v]) => `<div class="adm-row"><span>${esc(n)}</span><b>${v.qty} sold</b></div>`).join('') : '<p class="adm-hint">No sales yet.</p>'}
+        </div>
+
+        <div class="adm-card adm-card--wide">
+          <h3>Recent activity</h3>
+          ${activity.length ? activity.map((a) => `<div class="adm-row"><span>${a.html}</span><span class="adm-hint">${new Date(a.t).toLocaleString()}</span></div>`).join('') : '<p class="adm-hint">Nothing yet.</p>'}
+        </div>
+      </div>`;
+  }
+
+  $('[data-refresh]').addEventListener('click', async () => { await loadAll(); renderTab(); toast('Refreshed'); });
+
+  /* ================= INQUIRIES ================= */
+
+  const INQ_STATUSES = ['new', 'read', 'replied', 'closed'];
+
+  function renderInquiries() {
+    const list = state.inquiries.filter((i) =>
+      (!state.inqFilter || i.status === state.inqFilter) && (!state.inqKind || i.kind === state.inqKind));
+    $('[data-inq-count]').textContent = `(${list.length})`;
+    if (!list.length) {
+      $('[data-inq-table]').innerHTML = `<tr><td class="adm-hint" style="padding:1.4rem">${esc(state.inqError || 'No inquiries yet.')}</td></tr>`;
+      return;
+    }
+    $('[data-inq-table]').innerHTML = `
+      <tr><th>Date</th><th>Type</th><th>From</th><th>Subject</th><th>Status</th><th></th></tr>` +
+      list.map((i) => `<tr${i.status === 'new' ? ' class="adm-unread"' : ''}>
+        <td>${new Date(i.created_at).toLocaleString()}</td>
+        <td><span class="adm-tag ${i.kind === 'quotation' ? 'adm-tag--new' : ''}">${i.kind === 'quotation' ? 'Quotation' : 'Contact'}</span></td>
+        <td><b>${esc(i.name)}</b>${i.company ? `<br><span class="adm-hint">${esc(i.company)}</span>` : ''}</td>
+        <td>${esc(i.subject || '-')}${i.quantity ? `<br><span class="adm-hint">Qty: ${esc(i.quantity)}</span>` : ''}</td>
+        <td><select class="adm-select" data-inq-status="${i.id}">
+          ${INQ_STATUSES.map((s) => `<option value="${s}" ${s === i.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
+        </select></td>
+        <td><div class="adm-actions">
+          <button class="adm-btn adm-btn--ghost" data-inq-open="${i.id}">View</button>
+          <button class="adm-btn adm-btn--danger" data-inq-del="${i.id}">Delete</button>
+        </div></td>
+      </tr>
+      <tr class="adm-order-detail" data-inq-detail="${i.id}" hidden><td colspan="6"><div class="inner">
+        <div><span class="adm-label">Message</span><p class="adm-msg">${esc(i.message)}</p></div>
+        <div><span class="adm-label">Contact</span>
+          <p style="margin:.2rem 0"><a href="mailto:${esc(i.email)}?subject=${encodeURIComponent('Re: ' + (i.subject || 'Your inquiry') + ' - Velanzo')}">${esc(i.email)}</a>
+          ${i.phone ? `<br>${esc(i.phone)} · <a href="https://wa.me/${esc(i.phone.replace(/\D/g, ''))}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ''}</p>
+        </div>
+      </div></td></tr>`).join('');
+
+    const setStatus = async (id, status) => {
+      const { data, error } = await sb.from('inquiries').update({ status }).eq('id', id).select('id');
+      if (error || !data.length) { toast('Update failed: ' + (error ? error.message : 'no permission')); return false; }
+      state.inquiries.find((x) => x.id === id).status = status;
+      updateInqBadge();
+      return true;
+    };
+
+    $$('[data-inq-open]').forEach((b) => b.addEventListener('click', async () => {
+      const id = b.dataset.inqOpen;
+      const row = $(`[data-inq-detail="${id}"]`);
+      row.hidden = !row.hidden;
+      const i = state.inquiries.find((x) => x.id === id);
+      if (!row.hidden && i.status === 'new' && await setStatus(id, 'read')) {
+        $(`[data-inq-status="${id}"]`).value = 'read';
+        row.previousElementSibling.classList.remove('adm-unread');
+      }
+    }));
+    $$('[data-inq-status]').forEach((sel) => sel.addEventListener('change', async () => {
+      if (await setStatus(sel.dataset.inqStatus, sel.value)) toast('Inquiry → ' + sel.value);
+    }));
+    $$('[data-inq-del]').forEach((b) => b.addEventListener('click', async () => {
+      if (!confirm('Delete this inquiry permanently?')) return;
+      const { error } = await sb.from('inquiries').delete().eq('id', b.dataset.inqDel);
+      if (error) return toast('Delete failed: ' + error.message);
+      state.inquiries = state.inquiries.filter((x) => x.id !== b.dataset.inqDel);
+      updateInqBadge(); renderInquiries(); toast('Inquiry deleted');
+    }));
+  }
+
+  $('[data-inq-filter]').addEventListener('change', (e) => { state.inqFilter = e.target.value; renderInquiries(); });
+  $('[data-inq-kind]').addEventListener('change', (e) => { state.inqKind = e.target.value; renderInquiries(); });
 
   /* ================= GO ================= */
   boot();

@@ -39,8 +39,8 @@
           <a href="about.html">About Velanzo</a>
           <a href="#">Stores</a>
           <a href="why-choose-us.html">Why Choose Us</a>
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms &amp; Conditions</a>
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms &amp; Conditions</a>
         </div>
       </div>
       <div class="footer__bottom">

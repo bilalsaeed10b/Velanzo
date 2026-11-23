@@ -43,9 +43,9 @@
           <img class="hero__img" src="https://picsum.photos/seed/luna-hero1/1920/1200" alt="" />
           <div class="hero__content">
             <div>
-              <p class="eyebrow hero__eyebrow">Up to 40% Off</p>
-              <h1 class="hero__title">Season Sale</h1>
-              <a class="btn btn--light hero__cta" href="collection.html?c=all&sale=1">Shop Sale</a>
+              <p class="eyebrow hero__eyebrow">We offer Manufacturing and Bulk Orders</p>
+              <h1 class="hero__title">Manufacturing &amp; Wholesaling</h1>
+              <button type="button" class="btn btn--light hero__cta" data-quote-open>Get Quotation</button>
             </div>
           </div>
         </div>
@@ -70,9 +70,9 @@
     <div class="strip" aria-hidden="true">
       <div class="strip__track">
         <span class="strip__item">New Arrivals</span><span class="strip__item">Free Shipping Over PKR 3,500</span>
-        <span class="strip__item">14-Day Returns</span><span class="strip__item">Season Sale</span>
+        <span class="strip__item">14-Day Returns</span><a class="strip__item strip__link" href="https://www.instagram.com/velanzoclothing" target="_blank" rel="noopener noreferrer" tabindex="-1">Visit our Instagram Page</a>
         <span class="strip__item">New Arrivals</span><span class="strip__item">Free Shipping Over PKR 3,500</span>
-        <span class="strip__item">14-Day Returns</span><span class="strip__item">Season Sale</span>
+        <span class="strip__item">14-Day Returns</span><a class="strip__item strip__link" href="https://www.instagram.com/velanzoclothing" target="_blank" rel="noopener noreferrer" tabindex="-1">Visit our Instagram Page</a>
       </div>
     </div>
 
@@ -121,6 +121,25 @@
     </section>
   </main>
 
+  <dialog class="quote" data-quote>
+    <form class="quote__form" data-quote-form>
+      <div class="quote__head">
+        <h3>Get a Quotation</h3>
+        <button type="button" class="iconbtn" data-quote-close aria-label="Close">&times;</button>
+      </div>
+      <p class="quote__sub">Tell us about your manufacturing or bulk order and we'll get back to you within 24 hours.</p>
+      <div class="field"><label class="pdp__label" for="q-name">Name *</label><input class="input" id="q-name" name="name" required maxlength="120" /></div>
+      <div class="field"><label class="pdp__label" for="q-email">Email *</label><input class="input" id="q-email" name="email" type="email" required maxlength="200" /></div>
+      <div class="field"><label class="pdp__label" for="q-phone">Phone</label><input class="input" id="q-phone" name="phone" maxlength="40" /></div>
+      <div class="field"><label class="pdp__label" for="q-company">Company</label><input class="input" id="q-company" name="company" maxlength="120" /></div>
+      <div class="field"><label class="pdp__label" for="q-qty">Estimated Quantity</label><input class="input" id="q-qty" name="quantity" maxlength="60" placeholder="e.g. 500 pieces" /></div>
+      <div class="field"><label class="pdp__label" for="q-msg">Message *</label><textarea class="textarea" id="q-msg" name="message" required maxlength="4000" placeholder="Product type, fabric, sizes, timeline…"></textarea></div>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" class="quote__hp" aria-hidden="true" />
+      <p class="quote__err" data-quote-err hidden></p>
+      <button class="btn btn--block btn--lg" type="submit" data-quote-send>Send Request</button>
+    </form>
+  </dialog>
+
   <div data-slot="footer"></div>
 
   <script src="assets/js/loader.js"></script>
@@ -133,6 +152,7 @@
   <script src="assets/js/footer.js"></script>
   <script src="assets/js/moon3d.js"></script>
   <script src="assets/js/home.js"></script>
+  <script src="assets/js/inquiry.js"></script>
   <script src="assets/js/fx.js"></script>
 </body>
 </html>

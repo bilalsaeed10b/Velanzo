@@ -56,6 +56,13 @@ once — it rate-limits order placement (max 5 orders/email/hour). Then in the
 dashboard: **Authentication → Attack Protection → enable Leaked password
 protection**, and **Authentication → URL Configuration → set your Site URL**.
 
+## 3d. Inquiries + rate limiting (migration 5)
+
+In **SQL Editor**, run [`supabase/schema5-inquiries-ratelimit.sql`](supabase/schema5-inquiries-ratelimit.sql)
+once (after `schema4-image-colors.sql`). It adds the `inquiries` table used by the
+"Get Quotation" dialog and contact form (Admin → Inquiries), and rate limits every
+endpoint: orders, order tracking, inquiries, and writes to carts, profiles and admin tables.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the
