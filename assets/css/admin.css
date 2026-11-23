@@ -282,3 +282,4 @@ input, select, textarea { font: inherit; }
 .adm-btn--danger:disabled { opacity: .5; cursor: not-allowed; }
 .adm-btn--danger.is-armed { background: #c0392b; color: #fff; border-color: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,.25); }
 .adm-btn--danger.is-armed:hover { background: #a93226; border-color: #a93226; }
+.adm-paid { display: inline-flex; align-items: center; gap: .35rem; white-space: nowrap; cursor: pointer; }

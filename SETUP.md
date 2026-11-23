@@ -68,6 +68,11 @@ endpoint: orders, order tracking, inquiries, and writes to carts, profiles and a
 In **SQL Editor**, run [`supabase/schema6-order-delete.sql`](supabase/schema6-order-delete.sql)
 once. It lets admins delete orders from Admin → Orders.
 
+## 3f. Paid flag (migration 7)
+
+In **SQL Editor**, run [`supabase/schema7-order-paid.sql`](supabase/schema7-order-paid.sql)
+once. It adds the "Paid" checkbox in Admin → Orders; only paid orders count as received.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the

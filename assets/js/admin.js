@@ -578,7 +578,7 @@
       return;
     }
     $('[data-order-table]').innerHTML = `
-      <tr><th>Order</th><th>Date</th><th>Customer</th><th>City</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr>` +
+      <tr><th>Order</th><th>Date</th><th>Customer</th><th>City</th><th>Items</th><th>Total</th><th>Paid</th><th>Status</th><th></th></tr>` +
       list.map((o) => {
         const items = o.order_items || [];
         return `<tr>
@@ -588,6 +588,7 @@
         <td>${esc(o.city || '-')}</td>
         <td>${items.reduce((n, i) => n + i.qty, 0)}</td>
         <td>${money(o.total)}</td>
+        <td><label class="adm-paid"><input type="checkbox" data-paid="${o.id}" ${o.paid ? 'checked' : ''} /> ${o.paid ? 'Paid' : 'Unpaid'}</label></td>
         <td><select class="adm-select adm-status adm-status--${o.status}" data-status="${o.id}">
           ${(STATUSES.includes(o.status) ? STATUSES : [o.status, ...STATUSES]).map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}
         </select></td>
@@ -596,7 +597,7 @@
           <button class="adm-btn adm-btn--danger" data-order-del="${o.id}">Delete</button>
         </div></td>
       </tr>
-      <tr class="adm-order-detail" data-order-detail="${o.id}" hidden><td colspan="8"><div class="inner">
+      <tr class="adm-order-detail" data-order-detail="${o.id}" hidden><td colspan="9"><div class="inner">
         <div>
           <span class="adm-label">Items</span>
           ${items.map((it) => `<div class="adm-order-item">
@@ -617,6 +618,20 @@
     $$('[data-order-open]').forEach((b) => b.addEventListener('click', () => {
       const row = $(`[data-order-detail="${b.dataset.orderOpen}"]`);
       row.hidden = !row.hidden;
+    }));
+
+    $$('[data-paid]').forEach((cb) => cb.addEventListener('change', async () => {
+      const id = cb.dataset.paid;
+      const paid = cb.checked;
+      const { data, error } = await sb.from('orders').update({ paid }).eq('id', id).select('id');
+      if (error || !data.length) {
+        cb.checked = !paid;
+        return toast('Update failed: ' + (error ? (/paid/.test(error.message) ? 'run supabase/schema7-order-paid.sql' : error.message) : 'no permission - sign in again'));
+      }
+      const o = state.orders.find((x) => x.id === id);
+      o.paid = paid;
+      cb.parentElement.lastChild.textContent = paid ? ' Paid' : ' Unpaid';
+      toast(`Order ${o.order_number} marked ${paid ? 'paid' : 'unpaid'}`);
     }));
 
     $$('[data-order-del]').forEach((b) => b.addEventListener('click', () => confirmDeleteOrder(b.dataset.orderDel)));
@@ -695,8 +710,11 @@
     const live = orders.filter((o) => o.status !== 'cancelled');
     const now = Date.now();
     const since = (days) => (o) => now - new Date(o.created_at) < days * DAY;
-    const revenue = live.reduce((n, o) => n + (o.total || 0), 0);
-    const rev30 = live.filter(since(30)).reduce((n, o) => n + (o.total || 0), 0);
+    // Only orders flagged "Paid" count as money received.
+    const paidOrders = live.filter((o) => o.paid);
+    const revenue = paidOrders.reduce((n, o) => n + (o.total || 0), 0);
+    const rev30 = paidOrders.filter(since(30)).reduce((n, o) => n + (o.total || 0), 0);
+    const unpaid = live.filter((o) => !o.paid).reduce((n, o) => n + (o.total || 0), 0);
     const byStatus = Object.fromEntries(STATUSES.map((s) => [s, orders.filter((o) => o.status === s).length]));
     const newInq = state.inquiries.filter((i) => i.status === 'new').length;
     const quotes30 = state.inquiries.filter((i) => i.kind === 'quotation' && since(30)(i)).length;
@@ -733,10 +751,10 @@
 
     $('[data-dash]').innerHTML = `
       <div class="adm-tiles">
-        ${tile('Revenue', money(revenue), `${money(rev30)} last 30 days`)}
+        ${tile('Received', money(revenue), `${money(rev30)} last 30 days · ${money(unpaid)} unpaid`)}
         ${tile('Orders', orders.length, `${orders.filter(since(7)).length} in last 7 days`)}
         ${tile('Pending orders', byStatus.pending, `${byStatus.delivered} delivered`)}
-        ${tile('Avg. order value', money(live.length ? Math.round(revenue / live.length) : 0), `${byStatus.cancelled} cancelled`)}
+        ${tile('Avg. order value', money(paidOrders.length ? Math.round(revenue / paidOrders.length) : 0), `${byStatus.cancelled} cancelled`)}
         ${tile('New inquiries', newInq, `${quotes30} quotation requests in 30 days`)}
         ${tile('Products live', activeProducts, `${soldOut} sold out`)}
       </div>
