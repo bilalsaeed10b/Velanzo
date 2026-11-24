@@ -30,7 +30,7 @@
           <h5>Help</h5>
           <a href="track.html">Track Your Order</a>
           <a href="#">Shipping &amp; Delivery</a>
-          <a href="#">Returns &amp; Exchanges</a>
+          <a href="returns.html">Returns &amp; Exchanges</a>
           <a href="#">Size Guide</a>
           <a href="contact.html">Contact Us</a>
           <a href="#" data-quote-open>Inquiry / Get Quotation</a>

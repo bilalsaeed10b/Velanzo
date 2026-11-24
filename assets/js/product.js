@@ -62,7 +62,7 @@ window.LUNA.onReady(function () {
         <div class="accordion">
           ${accordion('Description', esc(p.description || `A wardrobe staple reimagined. The ${p.name.toLowerCase()} is cut for a ${p.fit.toLowerCase()} and finished with premium, durable fabrication for everyday wear.`))}
           ${accordion('Material & Care', 'Premium cotton-blend. Machine wash cold, tumble dry low, do not bleach. Iron on reverse if needed.')}
-          ${accordion('Delivery & Returns', 'Free standard delivery on orders over PKR 3,500. Easy 14-day returns on unworn items with tags attached.')}
+          ${accordion('Delivery & Returns', 'Free standard delivery on orders over PKR 3,500. Easy 3-day returns on unworn items with tags attached.')}
         </div>
       </div>
     </div>
