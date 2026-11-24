@@ -33,6 +33,7 @@
           <a href="#">Returns &amp; Exchanges</a>
           <a href="#">Size Guide</a>
           <a href="contact.html">Contact Us</a>
+          <a href="#" data-quote-open>Inquiry / Get Quotation</a>
         </div>
         <div class="footer__col">
           <h5>Company</h5>
@@ -41,6 +42,13 @@
           <a href="why-choose-us.html">Why Choose Us</a>
           <a href="privacy.html">Privacy Policy</a>
           <a href="terms.html">Terms &amp; Conditions</a>
+        </div>
+        <div class="footer__col footer__contact">
+          <h5>Contact</h5>
+          <a href="tel:+923141385681">+92 314 1385681</a>
+          <a href="https://wa.me/923141385681" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+          <p>Korangi 2. Market, Murshid Electronics Street, Sector 33-A, Korangi, Karachi</p>
+          <p>Sat–Thu: 11am–11pm<br>Fri: 3pm–11pm</p>
         </div>
       </div>
       <div class="footer__bottom">

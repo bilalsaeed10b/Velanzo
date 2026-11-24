@@ -508,7 +508,7 @@ ul { list-style: none; padding: 0; }
 
 /* ---------- Footer ---------- */
 .footer { background: var(--bg); border-top: 1px solid var(--line); padding-top: clamp(40px, 6vw, 72px); }
-.footer__top { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: clamp(24px, 3vw, 48px); padding-bottom: 3rem; }
+.footer__top { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: clamp(24px, 3vw, 48px); padding-bottom: 3rem; }
 .footer__brand .logo { color: var(--ink); }
 .footer__brand .logo__img {
   height: clamp(110px, 12vw, 140px);
@@ -1205,3 +1205,5 @@ html { overflow-x: clip; }
 .quote__sub { margin: 0 0 4px; color: #666; font-size: .9rem; }
 .quote__err { color: #c0392b; margin: 0; font-size: .9rem; }
 .quote__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.footer__contact p { color: var(--ink-2); font-size: var(--fs-sm); line-height: 1.6; margin: 0.35rem 0 0.6rem; }

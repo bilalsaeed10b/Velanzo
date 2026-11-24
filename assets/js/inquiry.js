@@ -27,15 +27,38 @@
 
   const toast = (m) => (window.LUNA && window.LUNA.toast ? window.LUNA.toast(m) : alert(m));
 
+  const DIALOG_HTML = `<dialog class="quote" data-quote>
+    <form class="quote__form" data-quote-form>
+      <div class="quote__head">
+        <h3>Get a Quotation</h3>
+        <button type="button" class="iconbtn" data-quote-close aria-label="Close">&times;</button>
+      </div>
+      <p class="quote__sub">Tell us about your manufacturing or bulk order and we'll get back to you within 24 hours.</p>
+      <div class="field"><label class="pdp__label" for="q-name">Name *</label><input class="input" id="q-name" name="name" required maxlength="120" /></div>
+      <div class="field"><label class="pdp__label" for="q-email">Email *</label><input class="input" id="q-email" name="email" type="email" required maxlength="200" /></div>
+      <div class="field"><label class="pdp__label" for="q-phone">Phone</label><input class="input" id="q-phone" name="phone" maxlength="40" /></div>
+      <div class="field"><label class="pdp__label" for="q-company">Company</label><input class="input" id="q-company" name="company" maxlength="120" /></div>
+      <div class="field"><label class="pdp__label" for="q-qty">Estimated Quantity</label><input class="input" id="q-qty" name="quantity" maxlength="60" placeholder="e.g. 500 pieces" /></div>
+      <div class="field"><label class="pdp__label" for="q-msg">Message *</label><textarea class="textarea" id="q-msg" name="message" required maxlength="4000" placeholder="Product type, fabric, sizes, timeline…"></textarea></div>
+      <input type="text" name="website" tabindex="-1" autocomplete="off" class="quote__hp" aria-hidden="true" />
+      <p class="quote__err" data-quote-err hidden></p>
+      <button class="btn btn--block btn--lg" type="submit" data-quote-send>Send Request</button>
+    </form>
+  </dialog>`;
+
   function initQuote() {
+    if (!document.querySelector('[data-quote]')) document.body.insertAdjacentHTML('beforeend', DIALOG_HTML);
     const dlg = document.querySelector('[data-quote]');
-    if (!dlg) return;
     const form = dlg.querySelector('[data-quote-form]');
     const err = dlg.querySelector('[data-quote-err]');
     const btn = dlg.querySelector('[data-quote-send]');
-    document.querySelectorAll('[data-quote-open]').forEach((b) => b.addEventListener('click', () => {
+    // Delegated: works for buttons rendered later (e.g. the footer link).
+    document.addEventListener('click', (e) => {
+      const opener = e.target.closest('[data-quote-open]');
+      if (!opener) return;
+      e.preventDefault();
       err.hidden = true; dlg.showModal();
-    }));
+    });
     dlg.querySelector('[data-quote-close]').addEventListener('click', () => dlg.close());
     dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
     form.addEventListener('submit', async (e) => {
