@@ -78,6 +78,11 @@ once. It adds the "Paid" checkbox in Admin → Orders; only paid orders count as
 Follow the steps at the top of [`supabase/schema8-whatsapp-alerts.sql`](supabase/schema8-whatsapp-alerts.sql)
 to get a free CallMeBot key, paste your number + key into the last statement, and run it.
 
+## 3h. Email alerts for inquiries (migration 9)
+
+Follow the steps at the top of [`supabase/schema9-email-alerts.sql`](supabase/schema9-email-alerts.sql)
+(free Brevo account + API key), fill in the key, sender and recipients at the bottom, and run it.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the
