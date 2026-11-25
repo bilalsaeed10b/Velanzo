@@ -13,6 +13,20 @@
     .co-grid { display: grid; grid-template-columns: 1fr 380px; gap: 3rem; align-items: start; }
     @media (max-width: 860px) { .co-grid { grid-template-columns: 1fr; } }
     .co-field { margin-bottom: 1rem; }
+    .co-field select { width: 100%; border: 1px solid var(--line-2); padding: 1rem; font: inherit; background: #fff; }
+    .co-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 560px) { .co-row { grid-template-columns: 1fr; } }
+    .co-pay { display: grid; gap: .6rem; margin: .4rem 0 1.4rem; }
+    .co-pay label { display: flex; gap: .8rem; align-items: flex-start; border: 1px solid var(--line-2); padding: 1rem; cursor: pointer; transition: border-color var(--dur) var(--ease); }
+    .co-pay label:has(input:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+    .co-pay input { margin-top: .2rem; accent-color: var(--ink); }
+    .co-pay b { display: block; }
+    .co-pay small { color: var(--ink-2); }
+    .co-cards { display: flex; gap: .35rem; margin-top: .45rem; }
+    .co-cards span { font-size: .62rem; font-weight: 800; letter-spacing: .06em; border: 1px solid var(--line-2); padding: .15rem .4rem; color: var(--ink-2); }
+    .co-sum-row { display: flex; justify-content: space-between; padding-top: .6rem; color: var(--ink-2); }
+    .co-secure { display: flex; gap: .45rem; align-items: center; justify-content: center; color: var(--ink-2); font-size: var(--fs-xs); margin-top: .8rem; }
+    .co-secure svg { width: 14px; height: 14px; }
     .co-field input, .co-field textarea {
       width: 100%; border: 1px solid var(--line-2); padding: 1rem; font: inherit; background: #fff;
     }
@@ -35,17 +49,42 @@
       <form data-co-form novalidate>
         <div class="co-field"><label class="pdp__label">Full Name *</label><input name="name" required maxlength="80" placeholder="Your name" /></div>
         <div class="co-field"><label class="pdp__label">Email *</label><input name="email" type="email" required maxlength="120" placeholder="you@example.com" /></div>
-        <div class="co-field"><label class="pdp__label">Phone</label><input name="phone" maxlength="40" placeholder="03xx-xxxxxxx" /></div>
+        <div class="co-field"><label class="pdp__label">Phone *</label><input name="phone" type="tel" required maxlength="40" placeholder="03xx-xxxxxxx" /></div>
         <div class="co-field"><label class="pdp__label">Delivery Address *</label><textarea name="address" required rows="3" maxlength="500" placeholder="House, street, area"></textarea></div>
-        <div class="co-field"><label class="pdp__label">City</label><input name="city" maxlength="100" placeholder="City" /></div>
-        <p style="color:var(--ink-2);font-size:var(--fs-sm);margin:1rem 0">Payment: <b>Cash on Delivery</b>. You pay when your order arrives.</p>
+        <div class="co-row">
+          <div class="co-field"><label class="pdp__label">City *</label>
+            <select name="city_select" data-co-city required>
+              <option value="Karachi">Karachi</option>
+              <option>Lahore</option><option>Islamabad</option><option>Rawalpindi</option>
+              <option>Faisalabad</option><option>Multan</option><option>Hyderabad</option>
+              <option>Peshawar</option><option>Quetta</option><option>Sialkot</option>
+              <option>Gujranwala</option><option value="__other">Other city…</option>
+            </select>
+          </div>
+          <div class="co-field" data-co-other hidden><label class="pdp__label">Your City *</label><input name="city_other" maxlength="100" placeholder="City name" /></div>
+        </div>
+
+        <span class="pdp__label">Payment Method *</span>
+        <div class="co-pay">
+          <label><input type="radio" name="payment" value="cod" checked />
+            <span><b>Cash on Delivery</b><small>Pay in cash when your order arrives.</small></span></label>
+          <label><input type="radio" name="payment" value="card" />
+            <span><b>Debit / Credit Card</b><small>Pay securely online via Safepay. You'll be redirected to complete payment.</small>
+              <span class="co-cards"><span>VISA</span><span>MASTERCARD</span><span>UNIONPAY</span></span></span></label>
+        </div>
+
         <button class="btn btn--block btn--lg" type="submit" data-co-submit>Place Order</button>
+        <p class="co-secure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Secure checkout · Card details are handled by Safepay, never stored by us</p>
+        <p style="color:var(--ink-2);font-size:var(--fs-xs);text-align:center">By placing your order you agree to our <a href="terms.html" style="text-decoration:underline">Terms</a> and <a href="privacy.html" style="text-decoration:underline">Privacy Policy</a>.</p>
         <p data-co-error style="color:var(--sale);margin-top:.8rem;display:none"></p>
       </form>
       <aside class="co-summary">
         <h3 style="margin-bottom:.5rem">Your Bag</h3>
         <div data-co-items></div>
+        <div class="co-sum-row"><span>Subtotal</span><span data-co-subtotal></span></div>
+        <div class="co-sum-row"><span>Shipping</span><span data-co-shipping></span></div>
         <div class="co-total"><span>Total</span><span data-co-total></span></div>
+        <p style="color:var(--ink-2);font-size:var(--fs-xs);margin-top:.6rem">Free delivery in Karachi · PKR 100 to other cities</p>
       </aside>
     </div>
   </main>

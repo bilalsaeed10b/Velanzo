@@ -587,7 +587,7 @@
         <td>${esc(o.customer_name)}</td>
         <td>${esc(o.city || '-')}</td>
         <td>${items.reduce((n, i) => n + i.qty, 0)}</td>
-        <td>${money(o.total)}</td>
+        <td>${money(o.total)}<br><span class="adm-tag ${o.payment_method === 'card' ? 'adm-tag--new' : ''}">${o.payment_method === 'card' ? 'Card' : 'COD'}</span>${o.shipping_fee ? `<span class="adm-hint"> +${money(o.shipping_fee)} ship</span>` : ''}</td>
         <td><label class="adm-paid"><input type="checkbox" data-paid="${o.id}" ${o.paid ? 'checked' : ''} /> ${o.paid ? 'Paid' : 'Unpaid'}</label></td>
         <td><select class="adm-select adm-status adm-status--${o.status}" data-status="${o.id}">
           ${(STATUSES.includes(o.status) ? STATUSES : [o.status, ...STATUSES]).map((s) => `<option value="${s}" ${s === o.status ? 'selected' : ''}>${s[0].toUpperCase() + s.slice(1)}</option>`).join('')}

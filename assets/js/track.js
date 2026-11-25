@@ -36,7 +36,8 @@ window.LUNA.onReady(function () {
         </div>
         ${steps}
         ${items}
-        <div class="tr-total"><span>Total (Cash on Delivery)</span><span>${formatPrice(o.total)}</span></div>
+        ${o.shipping ? `<div class="tr-total" style="font-weight:400"><span>Shipping</span><span>${formatPrice(o.shipping)}</span></div>` : ''}
+        <div class="tr-total"><span>Total (${o.payment_method === 'card' ? (o.paid ? 'Paid by Card' : 'Card - awaiting payment') : 'Cash on Delivery'})</span><span>${formatPrice(o.total)}</span></div>
       </div>`;
   }
 

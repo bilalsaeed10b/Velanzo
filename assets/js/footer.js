@@ -54,7 +54,7 @@
       <div class="footer__bottom">
         <p>© ${new Date().getFullYear()} Velanzo. All rights reserved.</p>
         <div class="footer__pay">
-          <span>VISA</span><span>MASTERCARD</span><span>COD</span><span>EASYPAISA</span>
+          <span>VISA</span><span>MASTERCARD</span><span>UNIONPAY</span><span>COD</span>
         </div>
       </div>
     </div>

@@ -83,6 +83,23 @@ to get a free CallMeBot key, paste your number + key into the last statement, an
 Follow the steps at the top of [`supabase/schema9-email-alerts.sql`](supabase/schema9-email-alerts.sql)
 (free Brevo account + API key), fill in the key, sender and recipients at the bottom, and run it.
 
+## 3i. Real checkout + Safepay card payments (migration 10)
+
+1. **SQL Editor** -> run [`supabase/schema10-checkout.sql`](supabase/schema10-checkout.sql)
+   (needs migrations 5, 7 and 9 first). Adds shipping (free in Karachi, PKR 100 elsewhere),
+   payment method, and order confirmation emails.
+2. **Edge Functions -> Deploy a new function -> Via Editor**, name it `safepay`, paste
+   [`supabase/functions/safepay/index.ts`](supabase/functions/safepay/index.ts), deploy.
+   Then open the function's settings and turn **OFF "Enforce JWT verification"**.
+3. **Edge Functions -> Secrets**, add:
+   `SAFEPAY_ENV=sandbox`, `SAFEPAY_API_KEY` (sec_... public key), `SAFEPAY_SECRET` (v1 secret),
+   `SAFEPAY_WEBHOOK_SECRET`, `SITE_URL` (your site address, no trailing slash).
+4. **Safepay dashboard -> Developers -> Webhooks**: add
+   `https://<project-ref>.supabase.co/functions/v1/safepay?action=webhook`.
+5. Test with a Safepay sandbox test card. If the amount on Safepay's page is 100x off,
+   set secret `SAFEPAY_AMOUNT_MULTIPLIER` to `100` (or back to `1`).
+6. Going live: switch `SAFEPAY_ENV=production` and use your production keys.
+
 ## 4. Connect the website
 
 1. Dashboard → **Settings** → **API Keys**: copy the **Project URL** and the
