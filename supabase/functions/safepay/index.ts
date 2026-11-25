@@ -8,14 +8,18 @@
 // Secrets (Supabase -> Edge Functions -> Secrets):
 //   SAFEPAY_ENV             sandbox | production
 //   SAFEPAY_API_KEY         public key  (sec_...)
-//   SAFEPAY_SECRET          v1 secret   (verifies the redirect signature)
-//   SAFEPAY_WEBHOOK_SECRET  webhook secret
+//   SAFEPAY_SECRET          secret key
+//   SAFEPAY_WEBHOOK_SECRET  Developer -> Endpoints -> View shared secret
 //   SITE_URL                e.g. https://bilalsaeed10b.github.io/Velanzo
-//   SAFEPAY_AMOUNT_MULTIPLIER  optional, default 1 (set 100 if Safepay expects paisa)
+//   SAFEPAY_AMOUNT_MULTIPLIER  optional, default 1
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided automatically.
 //
-// IMPORTANT: turn OFF "Enforce JWT verification" for this function —
-// Safepay's redirect and webhook can't send a Supabase token.
+// IMPORTANT:
+//   * Turn OFF "Enforce JWT verification" for this function.
+//   * In Safepay, the webhook endpoint must be subscribed to payment:created
+//     and payment.succeeded. The signed webhook is what marks an order Paid
+//     (the redirect carries no signature, and the reporter API cannot see
+//     trackers from this checkout flow).
 // ============================================================
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
@@ -60,6 +64,23 @@ function limited(req: Request, max = 10, windowMs = 60_000) {
   return ++h.n > max;
 }
 
+// Ask Safepay directly whether this tracker has been paid (best effort;
+// the signed webhook is the main confirmation).
+async function trackerPaid(tracker: string) {
+  if (!/^track_[0-9a-f-]{36}$/i.test(tracker)) return false;
+  for (const secret of [env('SAFEPAY_WEBHOOK_SECRET'), env('SAFEPAY_SECRET')]) {
+    if (!secret) continue;
+    const r = await fetch(`${API}/reporter/api/v1/payments/${tracker}`, {
+      headers: { 'X-SFPY-MERCHANT-SECRET': secret, accept: 'application/json' },
+    });
+    const b = await r.json().catch(() => ({}));
+    const state = String(b?.data?.tracker?.state || b?.data?.state || '').toUpperCase();
+    console.log('safepay reporter', r.status, state || JSON.stringify(b).slice(0, 300));
+    if (r.ok) return state === 'TRACKER_ENDED';
+  }
+  return false;
+}
+
 async function markPaid(orderId: string, ref: string) {
   // Only flips unpaid -> paid once; the email goes out exactly once.
   const { data } = await db.from('orders')
@@ -95,6 +116,7 @@ async function start(req: Request) {
   }
   await db.from('orders').update({ payment_ref: token }).eq('id', o.id);
 
+  // Safepay appends "?order_id=..&tracker=.." to this URL; handleReturn strips it from s.
   const back = (status: string) =>
     `${SELF}?action=return&o=${encodeURIComponent(o.order_number)}&e=${encodeURIComponent(o.email)}&s=${status}`;
   const qs = new URLSearchParams({
@@ -117,27 +139,26 @@ async function handleReturn(req: Request, url: URL) {
     if (ct.includes('json')) Object.assign(form, await req.json().catch(() => ({})));
     else (await req.formData().catch(() => new FormData())).forEach((v, k) => { form[k] = String(v); });
   }
-  const get = (k: string) => form[k] ?? p.get(k) ?? '';
-  const orderNo = get('o'), email = get('e');
-  const tracker = get('tracker'), sig = get('sig');
-  const done = (status: string) =>
-    redirect(`${SITE}/checkout.html?done=${encodeURIComponent(orderNo)}&e=${encodeURIComponent(email)}&status=${status}`);
-
-  if (get('s') === 'cancelled') return done('cancelled');
+  // Safepay appends "?order_id=..&tracker=.." to our URL, so strip anything after '?' in a value.
+  const get = (k: string) => String(form[k] ?? p.get(k) ?? '').split('?')[0];
+  const orderNo = get('o'), email = get('e'), status = get('s');
+  const tracker = get('tracker');
+  const done = (s: string) =>
+    redirect(`${SITE}/checkout.html?done=${encodeURIComponent(orderNo)}&e=${encodeURIComponent(email)}&status=${s}`);
 
   const { data: o } = await db.from('orders').select('*')
     .eq('order_number', orderNo.toUpperCase()).eq('email', email.toLowerCase()).maybeSingle();
   if (!o) return done('failed');
   if (o.paid) return done('paid');
 
-  // Verify: HMAC-SHA256(tracker, v1 secret) must equal sig, and the tracker
-  // must be the one we created for THIS order.
-  const expected = tracker ? await hmacHex('SHA-256', env('SAFEPAY_SECRET'), tracker) : '';
-  if (tracker && sig && safeEqual(expected, sig) && tracker === o.payment_ref) {
-    await markPaid(o.id, tracker);
+  // Only trust a tracker we created for THIS order, and only once Safepay confirms it.
+  const ref = tracker || o.payment_ref;
+  if (ref && ref === o.payment_ref && await trackerPaid(ref)) {
+    await markPaid(o.id, ref);
     return done('paid');
   }
-  // Signature missing/unclear: the webhook may still confirm it shortly.
+  if (status === 'cancelled') return done('cancelled');
+  // Not confirmed yet: the signed webhook will mark it paid shortly.
   return done('pending');
 }
 
@@ -145,19 +166,25 @@ async function webhook(req: Request) {
   const raw = await req.text();
   let body: any;
   try { body = JSON.parse(raw); } catch { return json({ ok: false }, 400); }
-  const sig = req.headers.get('x-sfpy-signature') || '';
-  const expected = await hmacHex('SHA-512', env('SAFEPAY_WEBHOOK_SECRET'), JSON.stringify(body?.data));
-  if (!safeEqual(expected, sig)) return json({ ok: false }, 401);
-
+  const sig = (req.headers.get('x-sfpy-signature') || '').toLowerCase();
+  const secret = env('SAFEPAY_WEBHOOK_SECRET');
+  const candidates = [raw, JSON.stringify(body), JSON.stringify(body?.data)];
+  let valid = false;
+  for (const c of candidates) if (safeEqual(await hmacHex('SHA-512', secret, c), sig)) { valid = true; break; }
   const d = body.data || {};
-  const tracker = d?.tracker?.token || d?.tracker || d?.token || '';
-  const state = String(d?.tracker?.state || d?.state || d?.status || '').toUpperCase();
-  const okType = /PAYMENT[._]SUCCEEDED|PAYMENT[._]SUCCESS|CHARGED|PAID/i.test(String(body.type || ''))
-    || /PAID|SUCCEEDED|ENDED|CAPTURED|COMPLETED/.test(state);
-  if (!tracker || !okType) return json({ ok: true, ignored: true });
+  const type = String(body?.type || body?.event || d?.event || d?.type || '');
+  const state = String(d?.tracker?.state || d?.state || '').toUpperCase();
+  // v1 events nest the tracker (e.g. under data.notification), so take the track_ id from the signed body.
+  const tracker = (raw.match(/track_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) || [''])[0];
+  console.log('safepay webhook', type, state, 'sig ok:', valid, 'tracker:', tracker ? 'found' : 'none', 'notification keys:', Object.keys(d?.notification || {}).join(','));
+  if (!valid) return json({ ok: false }, 401);
 
-  const { data: o } = await db.from('orders').select('id').eq('payment_ref', String(tracker)).maybeSingle();
-  if (o) await markPaid(o.id, String(tracker));
+  // The signature proves Safepay sent it; now make sure it is a success event.
+  const success = /^payment(:created|\.succeeded)$/i.test(type) || state === 'TRACKER_ENDED';
+  if (!tracker || !success) return json({ ok: true, ignored: true });
+
+  const { data: o } = await db.from('orders').select('id, paid').eq('payment_ref', tracker).maybeSingle();
+  if (o && !o.paid) await markPaid(o.id, tracker);
   return json({ ok: true });
 }
 
