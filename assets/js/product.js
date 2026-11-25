@@ -49,7 +49,7 @@ window.LUNA.onReady(function () {
         <span class="pdp__label">Color: <span data-color-name></span></span>
         <div class="swatches" data-swatches></div>
 
-        <span class="pdp__label">Select Size</span>
+        <span class="pdp__label pdp__sizehead">Select Size${p.sizeChart ? '<button type="button" class="pdp__sclink" data-sc-open>Size Chart</button>' : ''}</span>
         <div class="sizes" data-sizes>
           ${p.sizes.map((s) => `<button class="size" data-size="${esc(s)}">${esc(s)}</button>`).join('')}
         </div>
@@ -72,6 +72,22 @@ window.LUNA.onReady(function () {
       <div class="grid-products" data-related></div>
     </section>
   `;
+
+  // Size chart dialog
+  if (p.sizeChart) {
+    const sc = p.sizeChart;
+    const dlg = document.createElement('dialog');
+    dlg.className = 'sc-dialog';
+    dlg.innerHTML = `<div class="sc-dialog__head"><span>Size Chart</span><button type="button" aria-label="Close" data-sc-close>✕</button></div>
+      <div class="sc-dialog__body"><h3>${esc(p.name)}</h3><div class="sc-scroll"><table class="sc-table">
+        <tr>${sc.headers.map((h) => `<th>${esc(h)}</th>`).join('')}</tr>
+        ${sc.rows.map((r) => `<tr>${r.map((c, i) => (i ? `<td>${esc(c)}</td>` : `<th>${esc(c)}</th>`)).join('')}</tr>`).join('')}
+      </table></div><p class="sc-note">All measurements in inches.</p></div>`;
+    document.body.appendChild(dlg);
+    root.querySelector('[data-sc-open]').addEventListener('click', () => dlg.showModal());
+    dlg.querySelector('[data-sc-close]').addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  }
 
   function accordion(title, body) {
     return `<div class="accordion__item">

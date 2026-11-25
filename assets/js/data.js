@@ -92,6 +92,7 @@
       discount: row.compare_at && row.price ? Math.round((row.compare_at - row.price) / row.price * 100) : 0,
       colors, // [{id, name, hex}]
       sizes: Array.isArray(row.sizes) && row.sizes.length ? row.sizes : ['One Size'],
+      sizeChart: row.size_chart && Array.isArray(row.size_chart.rows) && row.size_chart.rows.length ? row.size_chart : null,
       badge: row.badge || null,
       soldOut: !!row.sold_out,
       description: row.description || '',

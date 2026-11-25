@@ -250,6 +250,8 @@
     form.compare_at.value = p && p.compare_at ? p.compare_at : '';
     form.description.value = p ? (p.description || '') : '';
     form.sizes.value = p ? (p.sizes || []).join(', ') : 'S, M, L, XL, XXL';
+    state.sc = scFromSaved(p && p.size_chart);
+    renderSizeChart();
     form.active.checked = p ? !!p.active : true;
     form.sold_out.checked = p ? !!p.sold_out : false;
     form.position.value = p ? p.position : state.products.length;
@@ -263,6 +265,48 @@
     openEditor(null);
   });
   $$('[data-editor-close]').forEach((b) => b.addEventListener('click', () => dlg.close()));
+
+  /* size chart: rows of [label, ...values], columns follow the sizes field */
+  const scSizes = () => form.sizes.value.split(',').map((s) => s.trim()).filter(Boolean);
+  function scFromSaved(sc) {
+    if (!sc || !Array.isArray(sc.rows)) return [];
+    const heads = (sc.headers || []).slice(1);
+    return sc.rows.map((r) => ({ label: r[0] || '', vals: Object.fromEntries(heads.map((h, i) => [h, r[i + 1] || ''])) }));
+  }
+  function readSizeChart() {
+    $$('[data-sc] tr[data-sc-row]').forEach((tr, i) => {
+      const row = state.sc[i];
+      const ins = tr.querySelectorAll('input');
+      row.label = ins[0].value;
+      ins.forEach((inp, j) => { if (j) row.vals[inp.dataset.size] = inp.value; });
+    });
+  }
+  function renderSizeChart() {
+    const sizes = scSizes();
+    $('[data-sc]').innerHTML = !state.sc.length ? '' :
+      `<tr><th>Description</th>${sizes.map((s) => `<th>${esc(s)}</th>`).join('')}<td class="adm-sc__del"></td></tr>` +
+      state.sc.map((r) => `<tr data-sc-row><td><input value="${esc(r.label)}" maxlength="40" placeholder="e.g. Chest" /></td>${
+        sizes.map((s) => `<td><input data-size="${esc(s)}" value="${esc(r.vals[s] || '')}" maxlength="12" /></td>`).join('')
+      }<td class="adm-sc__del"><button type="button" data-sc-del title="Remove row">✕</button></td></tr>`).join('');
+    $$('[data-sc-del]').forEach((b, i) => b.addEventListener('click', () => {
+      readSizeChart(); state.sc.splice(i, 1); renderSizeChart();
+    }));
+  }
+  function sizeChartValue() {
+    readSizeChart();
+    const sizes = scSizes();
+    const rows = state.sc.filter((r) => r.label.trim() || sizes.some((s) => (r.vals[s] || '').trim()))
+      .map((r) => [r.label.trim(), ...sizes.map((s) => (r.vals[s] || '').trim())]);
+    return rows.length ? { headers: ['Description', ...sizes], rows } : null;
+  }
+  $('[data-sc-add]').addEventListener('click', () => {
+    readSizeChart();
+    state.sc.push({ label: '', vals: {} });
+    renderSizeChart();
+    const ins = $$('[data-sc] tr[data-sc-row]:last-child input');
+    if (ins[0]) ins[0].focus();
+  });
+  form.sizes.addEventListener('input', () => { if (state.sc && state.sc.length) { readSizeChart(); renderSizeChart(); } });
 
   /* colors */
   function renderColorRows(colors) {
@@ -471,6 +515,7 @@
       compare_at: compareAt,
       description: form.description.value.trim(),
       sizes,
+      size_chart: sizeChartValue(),
       colors, // [{id, name, hex}]
       images: [...g.mains.map((m) => m.url), ...g.variants.map((v) => v.url)],
       // mains store { color:<colorId> }; color images store { color:<colorId>, main:<slotIndex> }
@@ -486,6 +531,10 @@
       ? sb.from('products').update(r).eq('id', state.editing.id).select().single()
       : sb.from('products').insert(r).select().single();
     let { data, error } = await save(row);
+    if (error && /size_chart/i.test(error.message)) {
+      btn.disabled = false; btn.textContent = 'Save Product';
+      return editorError('Size charts need a one-time database update: run supabase/schema11-size-chart.sql in the Supabase SQL Editor, then save again.');
+    }
     if (error && /image_colors/i.test(error.message)) {
       // DB migration schema4-image-colors.sql not run yet. Every image now
       // carries a color, so we can't save without the column - block clearly.
