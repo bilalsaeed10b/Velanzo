@@ -54,8 +54,9 @@ window.LUNA.onReady(function () {
           ${p.sizes.map((s) => `<button class="size" data-size="${esc(s)}">${esc(s)}</button>`).join('')}
         </div>
 
+        ${!p.soldOut && p.stock != null && p.stock < 6 ? `<p class="pdp__stock">Only ${p.stock} left in stock</p>` : ''}
         <div class="pdp__actions">
-          <button class="btn btn--lg" data-add>${I.bag}<span>Add to Basket</span></button>
+          <button class="btn btn--lg" data-add ${p.soldOut ? 'disabled' : ''}>${I.bag}<span>${p.soldOut ? 'Sold Out' : 'Add to Basket'}</span></button>
           <button class="iconbtn iconbtn--square ${Store.isWished(p.id) ? 'is-active' : ''}" data-wish-btn aria-label="Wishlist">${I.heart.replace('<svg', '<svg fill="none" stroke="currentColor" stroke-width="1.6"')}</button>
         </div>
 

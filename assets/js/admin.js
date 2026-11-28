@@ -163,7 +163,7 @@
         <td>${(p.compare_at && p.compare_at > p.price)
           ? `<span class="adm-tag adm-tag--sale">Sale</span>`
           : (p.badge === 'new' ? `<span class="adm-tag adm-tag--new">New</span>` : '')}</td>
-        <td>${p.active ? '' : '<span class="adm-tag adm-tag--off">Hidden</span> '}${p.sold_out ? '<span class="adm-tag">Sold out</span>' : ''}</td>
+        <td>${p.active ? '' : '<span class="adm-tag adm-tag--off">Hidden</span> '}${p.sold_out || p.stock === 0 ? '<span class="adm-tag">Sold out</span>' : ''}${p.stock != null && p.stock > 0 ? ` <span class="adm-hint">${p.stock} in stock</span>` : ''}</td>
         <td><div class="adm-actions">
           <button class="adm-btn adm-btn--ghost" data-edit="${p.id}">Edit</button>
           <button class="adm-btn adm-btn--danger" data-del="${p.id}">Delete</button>
@@ -254,6 +254,7 @@
     renderSizeChart();
     form.active.checked = p ? !!p.active : true;
     form.sold_out.checked = p ? !!p.sold_out : false;
+    form.stock.value = p && p.stock != null ? p.stock : '';
     form.position.value = p ? p.position : state.products.length;
     renderColorRows(colors);
     renderImages();
@@ -522,6 +523,7 @@
       image_colors: [...g.mains.map((m) => ({ color: m.colorId })), ...g.variants.map((v) => ({ color: v.colorId, main: v.main }))],
       active: form.active.checked,
       sold_out: form.sold_out.checked,
+      stock: form.stock.value === '' ? null : Math.max(0, parseInt(form.stock.value, 10) || 0),
       position: parseInt(form.position.value, 10) || 0,
     };
 
@@ -531,6 +533,10 @@
       ? sb.from('products').update(r).eq('id', state.editing.id).select().single()
       : sb.from('products').insert(r).select().single();
     let { data, error } = await save(row);
+    if (error && /stock/i.test(error.message)) {
+      btn.disabled = false; btn.textContent = 'Save Product';
+      return editorError('Stock needs a one-time database update: run supabase/schema12-stock.sql in the Supabase SQL Editor, then save again.');
+    }
     if (error && /size_chart/i.test(error.message)) {
       btn.disabled = false; btn.textContent = 'Save Product';
       return editorError('Size charts need a one-time database update: run supabase/schema11-size-chart.sql in the Supabase SQL Editor, then save again.');

@@ -94,7 +94,8 @@
       sizes: Array.isArray(row.sizes) && row.sizes.length ? row.sizes : ['One Size'],
       sizeChart: row.size_chart && Array.isArray(row.size_chart.rows) && row.size_chart.rows.length ? row.size_chart : null,
       badge: row.badge || null,
-      soldOut: !!row.sold_out,
+      soldOut: !!row.sold_out || row.stock === 0,
+      stock: row.stock == null ? null : row.stock,
       description: row.description || '',
       images: mains.map((m) => m.url), // gallery slots (cover = images[0])
       mainGroups,                      // per slot: { url, mainColorId, byColor:{id:url}, colorIds:[] }

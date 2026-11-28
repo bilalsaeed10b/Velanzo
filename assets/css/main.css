@@ -1222,3 +1222,5 @@ html { overflow-x: clip; }
 .sc-table th, .sc-table td { border: 1px solid #333; padding: .7rem .5rem; text-align: center; }
 .sc-table th { font-weight: 600; text-transform: uppercase; font-size: .75rem; letter-spacing: .03em; }
 .sc-note { color: #666; font-size: .8rem; margin-top: .8rem; }
+
+.pdp__stock { color: var(--sale); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: var(--fs-xs); margin: -.3rem 0 1rem; }

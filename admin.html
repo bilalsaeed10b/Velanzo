@@ -165,6 +165,8 @@
         </div>
 
         <label class="adm-check"><input type="checkbox" name="active" checked /> Visible in store</label>
+        <label>Stock (units)<input name="stock" type="number" min="0" step="1" placeholder="Leave empty = not tracked" />
+          <span class="adm-hint">Orders deduct stock automatically. Under 6 shows "Only X left" in store; 0 = sold out.</span></label>
         <label class="adm-check"><input type="checkbox" name="sold_out" /> Sold out</label>
         <label>Sort position<input name="position" type="number" step="1" value="0" /></label>
       </div>
