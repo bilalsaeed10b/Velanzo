@@ -37,6 +37,7 @@
       <nav class="adm-nav">
         <button data-tab="dashboard" class="is-active">Dashboard</button>
         <button data-tab="products">Products</button>
+        <button data-tab="stocks">Stocks</button>
         <button data-tab="categories">Categories</button>
         <button data-tab="orders">Orders</button>
         <button data-tab="inquiries">Inquiries <span class="adm-badge" data-inq-badge hidden></span></button>
@@ -65,6 +66,16 @@
           </div>
         </div>
         <div class="adm-table-wrap"><table class="adm-table" data-prod-table></table></div>
+      </section>
+
+      <!-- Stocks -->
+      <section data-panel="stocks" hidden>
+        <div class="adm-panel-head">
+          <h2>Stocks</h2>
+          <div><input class="adm-search" data-stk-search placeholder="Search products…" /></div>
+        </div>
+        <div data-stk-tiles></div>
+        <div data-stk-list></div>
       </section>
 
       <!-- Categories -->

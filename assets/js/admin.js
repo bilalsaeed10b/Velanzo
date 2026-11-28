@@ -140,6 +140,7 @@
     if (state.tab === 'dashboard') renderDashboard();
     if (state.tab === 'inquiries') renderInquiries();
     if (state.tab === 'products') renderProducts();
+    if (state.tab === 'stocks') renderStocks();
     if (state.tab === 'categories') renderCategories();
     if (state.tab === 'orders') renderOrders();
   }
@@ -189,6 +190,85 @@
     renderProducts();
     toast('Product deleted');
   }
+
+  /* ================= STOCKS ================= */
+
+  state.stkQuery = '';
+  const stockTag = (p) => p.sold_out || p.stock === 0 ? '<span class="adm-tag adm-tag--off">Out</span>'
+    : p.stock == null ? '<span class="adm-hint">Not tracked</span>'
+    : p.stock < 6 ? '<span class="adm-tag adm-tag--sale">Low</span>' : '<span class="adm-tag adm-tag--new">OK</span>';
+
+  function renderStocks() {
+    const q = state.stkQuery.toLowerCase();
+    const all = state.products;
+    const units = all.reduce((n, p) => n + (p.stock || 0), 0);
+    const low = all.filter((p) => p.stock != null && p.stock > 0 && p.stock < 6).length;
+    const out = all.filter((p) => p.sold_out || p.stock === 0).length;
+    const untracked = all.filter((p) => p.stock == null).length;
+    const tile = (l, v) => `<div class="adm-tile"><span class="adm-tile__label">${l}</span><b class="adm-tile__value">${v}</b></div>`;
+    $('[data-stk-tiles]').innerHTML = `<div class="adm-tiles adm-stk-tiles">${tile('Units in stock', units)}${tile('Low stock (under 6)', low)}${tile('Out of stock', out)}${tile('Not tracked', untracked)}</div>`;
+
+    const cats = [...state.categories.map((c) => c.slug), ...new Set(all.map((p) => p.category_slug))]
+      .filter((v, i, a) => a.indexOf(v) === i);
+    $('[data-stk-list]').innerHTML = cats.map((slug) => {
+      const list = all.filter((p) => p.category_slug === slug && (!q || p.name.toLowerCase().includes(q)));
+      if (!list.length) return '';
+      const catUnits = list.reduce((n, p) => n + (p.stock || 0), 0);
+      return `<h3 class="adm-stk-cat">${esc(catName(slug))} <span class="adm-hint">${list.length} products · ${catUnits} units</span></h3>
+      <div class="adm-table-wrap"><table class="adm-table adm-stk">
+        <tr><th></th><th>Product</th><th>Stock</th><th>Price</th><th>Compare-at</th><th>Visible</th><th>Sold out</th><th></th><th></th></tr>
+        ${list.map((p) => `<tr data-stk="${p.id}">
+          <td><img class="adm-thumb" src="${esc((p.images || [])[0] || '')}" alt="" loading="lazy"/></td>
+          <td><b>${esc(p.name)}</b></td>
+          <td><div class="adm-stepper"><button type="button" data-step="-1">−</button><input name="stock" type="number" min="0" value="${p.stock ?? ''}" placeholder="—" /><button type="button" data-step="1">+</button></div></td>
+          <td><input name="price" type="number" min="0" value="${p.price}" /></td>
+          <td><input name="compare_at" type="number" min="0" value="${p.compare_at ?? ''}" placeholder="—" /></td>
+          <td><input name="active" type="checkbox" ${p.active ? 'checked' : ''} /></td>
+          <td><input name="sold_out" type="checkbox" ${p.sold_out ? 'checked' : ''} /></td>
+          <td>${stockTag(p)}</td>
+          <td><button class="adm-btn" data-stk-save disabled>Save</button></td>
+        </tr>`).join('')}
+      </table></div>`;
+    }).join('') || '<p class="adm-hint">No products found.</p>';
+
+    $$('[data-stk]').forEach((tr) => {
+      const save = tr.querySelector('[data-stk-save]');
+      const dirty = () => { save.disabled = false; tr.classList.add('is-dirty'); };
+      tr.querySelectorAll('input').forEach((i) => i.addEventListener('input', dirty));
+      tr.querySelectorAll('[data-step]').forEach((b) => b.addEventListener('click', () => {
+        const inp = tr.querySelector('[name=stock]');
+        inp.value = Math.max(0, (parseInt(inp.value, 10) || 0) + Number(b.dataset.step));
+        dirty();
+      }));
+      save.addEventListener('click', () => saveStockRow(tr, save));
+    });
+  }
+
+  async function saveStockRow(tr, btn) {
+    const p = state.products.find((x) => x.id === tr.dataset.stk);
+    const val = (n) => tr.querySelector(`[name=${n}]`);
+    const price = parseInt(val('price').value, 10);
+    const compareAt = val('compare_at').value === '' ? null : parseInt(val('compare_at').value, 10);
+    if (!(price >= 0)) return toast('Enter a valid price');
+    if (compareAt !== null && compareAt <= price) return toast('Compare-at must be higher than the price');
+    const row = { price, compare_at: compareAt, active: val('active').checked, sold_out: val('sold_out').checked };
+    const want = val('stock').value === '' ? null : Math.max(0, parseInt(val('stock').value, 10) || 0);
+    btn.disabled = true; btn.textContent = 'Saving…';
+    if (want === null || p.stock == null) row.stock = want;
+    else {
+      // Apply the change on top of the latest stock, so orders placed meanwhile aren't overwritten.
+      const { data: cur } = await sb.from('products').select('stock').eq('id', p.id).single();
+      row.stock = Math.max(0, (cur && cur.stock != null ? cur.stock : p.stock) + (want - p.stock));
+    }
+    const { data, error } = await sb.from('products').update(row).eq('id', p.id).select().single();
+    btn.textContent = 'Save';
+    if (error) { btn.disabled = false; return toast('Save failed: ' + error.message); }
+    Object.assign(p, data);
+    toast(`Saved "${p.name}"`);
+    renderStocks();
+  }
+
+  $('[data-stk-search]').addEventListener('input', (e) => { state.stkQuery = e.target.value; renderStocks(); });
 
   /* ---------- editor ---------- */
 

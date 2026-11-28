@@ -293,3 +293,14 @@ input, select, textarea { font: inherit; }
 .adm-sc td:first-child input { min-width: 110px; text-align: left; }
 .adm-sc td.adm-sc__del { width: 32px; border: 0; }
 .adm-sc td.adm-sc__del button { border: 0; background: none; cursor: pointer; color: #b00; padding: .3rem; }
+
+/* Stocks tab */
+.adm-stk-tiles { margin-bottom: 1.2rem; }
+.adm-stk-cat { margin: 1.4rem 0 .6rem; font-size: 1rem; }
+.adm-stk input[type=number] { width: 90px; padding: .35rem .4rem; border: 1px solid #d5d8dc; font: inherit; }
+.adm-stk tr.is-dirty td { background: #fffbea; }
+.adm-stepper { display: inline-flex; align-items: center; }
+.adm-stepper input[type=number] { width: 64px; text-align: center; border-left: 0; border-right: 0; -moz-appearance: textfield; }
+.adm-stepper input::-webkit-outer-spin-button, .adm-stepper input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.adm-stepper button { width: 30px; height: 32px; border: 1px solid #d5d8dc; background: #f6f7f8; cursor: pointer; font-size: 1rem; }
+.adm-stepper button:hover { background: #e9ebee; }
